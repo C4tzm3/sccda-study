@@ -1,0 +1,2344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCCDA Study Guide – Splunk Cybersecurity Defense Architect</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #181c24;
+    --border: #1e2330;
+    --accent: #f97316;
+    --accent2: #ec4899;
+    --green: #22c55e;
+    --blue: #38bdf8;
+    --yellow: #fbbf24;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #0f1117 0%, #1a0a2e 50%, #0f1117 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(249,115,22,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 20%;
+    width: 400px; height: 200px;
+    background: radial-gradient(ellipse, rgba(236,72,153,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .header-tag::before { content: '//'; color: var(--muted); }
+  h1 {
+    font-size: clamp(22px, 4vw, 36px);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(90deg, #f97316, #ec4899, #38bdf8);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header-meta {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    margin-top: 16px;
+  }
+  .badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+  .badge.orange { border-color: var(--accent); color: var(--accent); background: rgba(249,115,22,0.1); }
+  .badge.pink { border-color: var(--accent2); color: var(--accent2); background: rgba(236,72,153,0.1); }
+  .badge.blue { border-color: var(--blue); color: var(--blue); background: rgba(56,189,248,0.1); }
+  .badge.green { border-color: var(--green); color: var(--green); background: rgba(34,197,94,0.1); }
+
+  /* LAYOUT */
+  .app {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: calc(100vh - 120px);
+  }
+
+  /* SIDEBAR */
+  aside {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    position: sticky;
+    top: 0; height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+  .sidebar-section {
+    padding: 8px 16px 4px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 12px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: all 0.2s;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.3;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); border-left-color: var(--border); }
+  .nav-item.active { background: rgba(249,115,22,0.08); color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
+  .nav-pct {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .nav-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    flex-shrink: 0;
+    min-width: 18px;
+  }
+
+  /* CONTENT */
+  main {
+    padding: 32px;
+    overflow-y: auto;
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* TOPIC CARD */
+  .section-header {
+    display: flex; align-items: flex-start; gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    opacity: 0.6;
+    min-width: 50px;
+  }
+  .section-title { font-size: 22px; font-weight: 700; line-height: 1.2; }
+  .section-pct {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    background: rgba(249,115,22,0.1);
+    border: 1px solid rgba(249,115,22,0.3);
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  /* LESSON CARDS */
+  .lesson-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .lesson-card:hover { border-color: var(--accent); }
+  .lesson-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    background: var(--surface2);
+  }
+  .lesson-id {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent2);
+    min-width: 28px;
+  }
+  .lesson-title { font-size: 14px; font-weight: 600; flex: 1; }
+  .toggle-btn {
+    width: 24px; height: 24px;
+    border-radius: 4px;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    color: var(--muted);
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .lesson-card.open .toggle-btn { background: var(--accent); color: white; transform: rotate(45deg); }
+  .lesson-body {
+    display: none;
+    padding: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .lesson-card.open .lesson-body { display: block; }
+
+  /* CONTENT ELEMENTS */
+  .explain-box {
+    background: rgba(56,189,248,0.05);
+    border-left: 3px solid var(--blue);
+    padding: 14px 16px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 14px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .explain-box .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--blue);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .analogy-box {
+    background: rgba(34,197,94,0.05);
+    border-left: 3px solid var(--green);
+    padding: 14px 16px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 14px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .analogy-box .label { font-family: var(--mono); font-size: 10px; color: var(--green); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+
+  .tip-box {
+    background: rgba(251,191,36,0.05);
+    border-left: 3px solid var(--yellow);
+    padding: 14px 16px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 14px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .tip-box .label { font-family: var(--mono); font-size: 10px; color: var(--yellow); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #7dd3fc;
+    line-height: 1.8;
+    margin-bottom: 14px;
+    overflow-x: auto;
+  }
+  .code-block .comment { color: var(--muted); }
+  .code-block .keyword { color: var(--accent2); }
+  .code-block .value { color: var(--green); }
+
+  .key-list {
+    list-style: none;
+    display: grid;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .key-list li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13px;
+    line-height: 1.6;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .key-list li::before {
+    content: '▸';
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .comp-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .comp-card .comp-title {
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--accent);
+    margin-bottom: 6px;
+    font-family: var(--mono);
+    text-transform: uppercase;
+  }
+
+  .sub-heading {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent2);
+    margin: 16px 0 8px;
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* QUIZ */
+  .quiz-section {
+    margin-top: 28px;
+    border-top: 1px dashed var(--border);
+    padding-top: 24px;
+  }
+  .quiz-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .quiz-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .quiz-q {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .quiz-q .q-text { font-size: 13px; line-height: 1.7; margin-bottom: 12px; font-weight: 600; }
+  .quiz-options { display: grid; gap: 8px; }
+  .quiz-opt {
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--muted);
+  }
+  .quiz-opt:hover { border-color: var(--accent); color: var(--text); }
+  .quiz-opt.correct { background: rgba(34,197,94,0.1); border-color: var(--green); color: var(--green); }
+  .quiz-opt.wrong { background: rgba(239,68,68,0.1); border-color: var(--red); color: var(--red); }
+  .quiz-opt.reveal { background: rgba(34,197,94,0.05); border-color: rgba(34,197,94,0.3); color: rgba(34,197,94,0.7); }
+  .quiz-explain {
+    display: none;
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: rgba(56,189,248,0.05);
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--blue);
+  }
+
+  /* OVERVIEW */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .overview-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .overview-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .overview-card .oc-num {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    opacity: 0.7;
+  }
+  .overview-card .oc-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .domain-bar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .domain-bar:hover { border-color: var(--accent); transform: translateX(4px); }
+  .domain-bar .db-num { font-family: var(--mono); font-size: 11px; color: var(--muted); min-width: 20px; }
+  .domain-bar .db-title { font-size: 13px; flex: 1; }
+  .domain-bar .db-pct {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    width: 80px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+  }
+
+  /* SPLUNK BASICS */
+  .arch-diagram {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 2;
+    color: var(--muted);
+  }
+  .arch-diagram .node {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .node-orange { background: rgba(249,115,22,0.15); color: var(--accent); border: 1px solid rgba(249,115,22,0.3); }
+  .node-blue { background: rgba(56,189,248,0.15); color: var(--blue); border: 1px solid rgba(56,189,248,0.3); }
+  .node-green { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+  .node-pink { background: rgba(236,72,153,0.15); color: var(--accent2); border: 1px solid rgba(236,72,153,0.3); }
+
+  .arrow { color: var(--accent); padding: 0 8px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  @media (max-width: 768px) {
+    .app { grid-template-columns: 1fr; }
+    aside { position: fixed; left: -260px; top: 0; height: 100vh; z-index: 100; transition: left 0.3s; width: 260px; }
+    aside.open { left: 0; }
+    .hamburger { display: flex; }
+    .comparison-grid { grid-template-columns: 1fr; }
+  }
+
+  .hamburger {
+    display: none;
+    position: fixed; bottom: 20px; right: 20px;
+    z-index: 200;
+    width: 48px; height: 48px;
+    background: var(--accent);
+    border-radius: 50%;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    box-shadow: 0 4px 20px rgba(249,115,22,0.4);
+  }
+
+  /* TOP BREADCRUMB NAV */
+  .top-nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 32px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .top-nav .home-btn {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(249,115,22,0.1);
+    border: 1px solid rgba(249,115,22,0.3);
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .top-nav .home-btn:hover { background: rgba(249,115,22,0.2); }
+  .top-nav .breadcrumb-sep { color: var(--muted); font-size: 12px; }
+  .top-nav .breadcrumb-current {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .top-nav .nav-arrows { display: flex; gap: 6px; margin-left: auto; }
+  .top-nav .nav-arrow-btn {
+    display: flex; align-items: center; gap: 5px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .top-nav .nav-arrow-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .top-nav .nav-arrow-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .top-nav .nav-arrow-btn:disabled:hover { border-color: var(--border); color: var(--muted); }
+
+  /* BOTTOM PAGE NAV */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    gap: 12px;
+  }
+  .page-nav-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+    color: var(--text);
+    min-width: 140px;
+  }
+  .page-nav-btn:hover { border-color: var(--accent); background: rgba(249,115,22,0.06); }
+  .page-nav-btn .pnb-label { font-family: var(--mono); font-size: 10px; color: var(--muted); display: block; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; }
+  .page-nav-btn .pnb-title { font-size: 12px; font-weight: 600; }
+  .page-nav-btn.next { text-align: right; flex-direction: row-reverse; }
+  .page-nav-btn.home-center { margin: 0 auto; min-width: auto; padding: 10px 24px; justify-content: center; }
+
+  /* DOMAIN MCQ SECTION */
+  .mcq-section {
+    margin-top: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .mcq-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 20px;
+    background: linear-gradient(90deg, rgba(249,115,22,0.12), rgba(236,72,153,0.06));
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .mcq-header .mcq-icon { font-size: 18px; }
+  .mcq-header .mcq-title { font-size: 15px; font-weight: 700; flex: 1; }
+  .mcq-header .mcq-count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(249,115,22,0.1);
+    border: 1px solid rgba(249,115,22,0.3);
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+  .mcq-header .mcq-toggle {
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--muted);
+    transition: transform 0.2s;
+  }
+  .mcq-body { display: none; padding: 20px; }
+  .mcq-section.open .mcq-body { display: block; }
+  .mcq-section.open .mcq-toggle { transform: rotate(180deg); }
+
+  .mcq-score-bar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .mcq-score-bar .score-val { font-family: var(--mono); font-size: 14px; color: var(--accent); font-weight: 700; }
+  .mcq-reset-btn {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 4px 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mcq-reset-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  @media (max-width: 768px) {
+    .app { grid-template-columns: 1fr; }
+    aside { position: fixed; left: -260px; top: 0; height: 100vh; z-index: 100; transition: left 0.3s; width: 260px; }
+    aside.open { left: 0; }
+    .hamburger { display: flex; }
+    .comparison-grid { grid-template-columns: 1fr; }
+    .top-nav { padding: 8px 16px; }
+    .top-nav .nav-arrows .nav-arrow-btn span { display: none; }
+    .page-nav { flex-wrap: wrap; }
+    .page-nav-btn { min-width: 120px; font-size: 12px; }
+  }
+
+  /* ── DOCS RESOURCE BOX ── */
+  .docs-box {
+    margin-top: 28px;
+    background: linear-gradient(135deg, rgba(56,189,248,0.06), rgba(249,115,22,0.04));
+    border: 1px solid rgba(56,189,248,0.25);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .docs-box-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--blue);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .docs-box-title::after { content: ''; flex:1; height:1px; background: rgba(56,189,248,0.2); }
+  .docs-links { display: grid; gap: 7px; }
+  .docs-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-size: 12px;
+    color: var(--text);
+  }
+  .docs-link:hover { border-color: var(--blue); color: var(--blue); transform: translateX(3px); }
+  .docs-link .dl-icon { font-size: 14px; flex-shrink: 0; }
+  .docs-link .dl-title { font-weight: 600; font-size: 12px; }
+  .docs-link .dl-desc { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .docs-link-inner { flex: 1; }
+  .docs-link .dl-arrow { color: var(--muted); font-size: 12px; margin-left: auto; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-tag">STUDY GUIDE</div>
+  <h1>Splunk Certified Cybersecurity<br>Defense Architect</h1>
+  <div class="header-meta">
+    <span class="badge orange">120 Questions</span>
+    <span class="badge blue">120 Minutes</span>
+    <span class="badge pink">Expert Level</span>
+    <span class="badge green">8 Domains</span>
+  </div>
+</header>
+
+<div class="app">
+  <aside id="sidebar">
+    <div class="sidebar-section">START HERE</div>
+    <div class="nav-item active" onclick="show('overview')">🏠 Overview & Exam Map</div>
+    <div class="nav-item" onclick="show('basics')">⚙️ Your Foundation Mapped</div>
+
+    <div class="sidebar-section">DOMAIN STUDY</div>
+    <div class="nav-item" onclick="show('d1')"><span class="nav-num">1.</span> Threat Intelligence<span class="nav-pct">5%</span></div>
+    <div class="nav-item" onclick="show('d2')"><span class="nav-num">2.</span> Security Data Mgmt<span class="nav-pct">20%</span></div>
+    <div class="nav-item" onclick="show('d3')"><span class="nav-num">3.</span> Incident Response<span class="nav-pct">10%</span></div>
+    <div class="nav-item" onclick="show('d4')"><span class="nav-num">4.</span> Automation & SOAR<span class="nav-pct">10%</span></div>
+    <div class="nav-item" onclick="show('d5')"><span class="nav-num">5.</span> DevSecOps & Scaling<span class="nav-pct">15%</span></div>
+    <div class="nav-item" onclick="show('d6')"><span class="nav-num">6.</span> GRC<span class="nav-pct">10%</span></div>
+    <div class="nav-item" onclick="show('d7')"><span class="nav-num">7.</span> Measuring Effectiveness<span class="nav-pct">15%</span></div>
+    <div class="nav-item" onclick="show('d8')"><span class="nav-num">8.</span> Capability Selection<span class="nav-pct">15%</span></div>
+
+    <div class="sidebar-section">PRACTICE</div>
+    <div class="nav-item" onclick="show('quiz')">🎯 Practice Quiz</div>
+    <div class="nav-item" onclick="show('glossary')">📖 Key Terms Glossary</div>
+  </aside>
+
+  <main>
+    <!-- TOP BREADCRUMB NAV -->
+    <div class="top-nav" id="topNav">
+      <div class="home-btn" onclick="show('overview')">🏠 <span>Home</span></div>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current" id="breadcrumbText">Overview &amp; Exam Map</span>
+      <div class="nav-arrows">
+        <button class="nav-arrow-btn" id="prevBtn" onclick="navStep(-1)">← <span>Prev</span></button>
+        <button class="nav-arrow-btn" id="nextBtn" onclick="navStep(1)"><span>Next</span> →</button>
+      </div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div id="overview" class="panel active">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Exam Overview & Your Study Map</div>
+          <div style="color:var(--muted);font-size:13px;margin-top:6px;">Start here. Understand what the exam is testing before diving in.</div>
+        </div>
+      </div>
+
+      <div class="overview-grid">
+        <div class="overview-card">
+          <div class="oc-num">120</div>
+          <div class="oc-label">Questions total</div>
+        </div>
+        <div class="overview-card">
+          <div class="oc-num">117</div>
+          <div class="oc-label">Minutes to answer (3 min for agreement)</div>
+        </div>
+        <div class="overview-card">
+          <div class="oc-num">8</div>
+          <div class="oc-label">Exam domains</div>
+        </div>
+        <div class="overview-card">
+          <div class="oc-num">5–7</div>
+          <div class="oc-label">Years experience assumed</div>
+        </div>
+      </div>
+
+      <div class="explain-box">
+        <div class="label">What this exam is REALLY testing</div>
+        This is NOT a "how to use Splunk" exam. It tests whether you can ARCHITECT a security program — meaning: how you design, scale, and govern an entire organization's defenses using Splunk. Think like a CISO or Security Architect, not a SOC analyst.
+      </div>
+
+      <div class="analogy-box">
+        <div class="label">Simple analogy for you</div>
+        You already know how to drive a car (query Splunk, set up forwarders). This exam asks: "Can you design the city's road system, traffic laws, fuel infrastructure, and emergency response plan?" Same vehicle, totally different level of thinking.
+      </div>
+
+      <p class="sub-heading">Domain Weight — where to focus your time</p>
+      <div class="domain-bar" onclick="show('d2')"><span class="db-num">2.</span><span class="db-title">Security Data Management</span><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="db-pct">20%</span></div>
+      <div class="domain-bar" onclick="show('d5')"><span class="db-num">5.</span><span class="db-title">DevSecOps & Scaling</span><div class="progress-bar"><div class="progress-fill" style="width:75%"></div></div><span class="db-pct">15%</span></div>
+      <div class="domain-bar" onclick="show('d7')"><span class="db-num">7.</span><span class="db-title">Measuring Security Effectiveness</span><div class="progress-bar"><div class="progress-fill" style="width:75%"></div></div><span class="db-pct">15%</span></div>
+      <div class="domain-bar" onclick="show('d8')"><span class="db-num">8.</span><span class="db-title">Capability Selection & Placement</span><div class="progress-bar"><div class="progress-fill" style="width:75%"></div></div><span class="db-pct">15%</span></div>
+      <div class="domain-bar" onclick="show('d3')"><span class="db-num">3.</span><span class="db-title">Incident Response & Management</span><div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div><span class="db-pct">10%</span></div>
+      <div class="domain-bar" onclick="show('d4')"><span class="db-num">4.</span><span class="db-title">Automation & Orchestration</span><div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div><span class="db-pct">10%</span></div>
+      <div class="domain-bar" onclick="show('d6')"><span class="db-num">6.</span><span class="db-title">Governance, Risk, Compliance</span><div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div><span class="db-pct">10%</span></div>
+      <div class="domain-bar" onclick="show('d1')"><span class="db-num">1.</span><span class="db-title">Threat Intelligence & Analysis</span><div class="progress-bar"><div class="progress-fill" style="width:25%"></div></div><span class="db-pct">5%</span></div>
+
+      <div class="docs-box" style="margin-top:20px;">
+        <div class="docs-box-title">📚 Official Study Resources (from the Blueprint)</div>
+        <div class="docs-links">
+          <a class="docs-link" href="https://help.splunk.com/en/splunk-enterprise-security-8" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Enterprise Security 8 Docs</div><div class="dl-desc">help.splunk.com — the main official ES documentation hub</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://help.splunk.com/en/splunk-soar" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk SOAR Docs</div><div class="dl-desc">Playbooks, orchestration, automation documentation</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://lantern.splunk.com/Security" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Lantern — Security Use Cases</div><div class="dl-desc">Practical security patterns — highly relevant to exam scenarios</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://research.splunk.com/" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Threat Research Team (STRT)</div><div class="dl-desc">Threat research blog — listed in official blueprint as study resource</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://www.youtube.com/@SplunkHowTo" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk YouTube Channel</div><div class="dl-desc">Official video tutorials — listed in the blueprint as study resource</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://www.splunk.com/en_us/training/certification-track/splunk-certified-cybersecurity-defense-architect.html" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">SCCDA Certification Page</div><div class="dl-desc">Official exam registration and certification track information</div></div><span class="dl-arrow">↗</span></a>
+        </div>
+      </div>
+
+      <div class="tip-box" style="margin-top:20px;">
+        <div class="label">💡 Study Strategy for Beginners</div>
+        Spend 40% of your time on Domains 2, 5, 7, and 8 — they make up 65% of the exam. Read each domain in this guide, understand the "why" not just the "what." The exam loves scenario-based questions like "An organization needs to… what should the architect recommend?"
+      </div>
+
+      <div class="page-nav">
+        <div style="min-width:140px;"></div>
+        <div class="page-nav-btn home-center" onclick="show('basics')">
+          <span>⚙️ Start Studying → Your Foundation</span>
+        </div>
+        <div class="page-nav-btn next" onclick="show('basics')">
+          <span>›</span>
+          <div><span class="pnb-label">Next</span><span class="pnb-title">Your Foundation</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- YOUR FOUNDATION -->
+    <div id="basics" class="panel">
+      <div class="section-header">
+        <div class="section-num">00</div>
+        <div>
+          <div class="section-title">Your Foundation, Mapped to the Exam</div>
+          <div style="color:var(--muted);font-size:13px;margin-top:6px;">What you already know, and how it connects to architect-level thinking</div>
+        </div>
+      </div>
+
+      <div class="explain-box">
+        <div class="label">Good news first</div>
+        Your experience with Splunk queries, server setup, deployment server, universal forwarder, and heavy forwarder is a REAL advantage. The architect exam builds directly on top of this. Let's bridge the gap.
+      </div>
+
+      <p class="sub-heading">Splunk Architecture — The Big Picture You Already Live In</p>
+
+      <div class="arch-diagram">
+        <div style="margin-bottom:12px; color: var(--text); font-size:13px; font-weight:700;">Data Flow in a Splunk Deployment</div>
+        <div style="margin-bottom:8px;">
+          <span class="node node-green">Data Sources</span>
+          <span class="arrow">→</span>
+          <span class="node node-blue">Universal Forwarder</span>
+          <span class="arrow">→</span>
+          <span class="node node-orange">Heavy Forwarder</span>
+          <span class="arrow">→</span>
+          <span class="node node-pink">Indexer</span>
+          <span class="arrow">→</span>
+          <span class="node node-blue">Search Head</span>
+        </div>
+        <div style="margin-bottom:8px; font-size:11px; color: var(--muted);">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↑ you know this &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↑ you know this
+        </div>
+        <div style="margin-top:14px;">
+          <span class="node node-orange">Deployment Server</span>
+          <span style="padding:0 8px; color: var(--muted)">manages config for</span>
+          <span class="node node-blue">Universal Forwarders</span>
+          <span style="padding:0 8px; color: var(--muted)">across</span>
+          <span class="node node-green">hundreds of hosts</span>
+        </div>
+        <div style="margin-top:14px; font-size:11px; color: var(--muted);">↑ You already manage this — the exam extends this to multi-site, clustered, cloud-hybrid designs</div>
+      </div>
+
+      <p class="sub-heading">The Jump: From Operator to Architect</p>
+      <div class="comparison-grid">
+        <div class="comp-card">
+          <div class="comp-title">🔧 Operator (You Now)</div>
+          "How do I configure the forwarder to send logs to this indexer?"<br><br>
+          "How do I write a search to find failed logins?"<br><br>
+          "How do I add a new input on the deployment server?"
+        </div>
+        <div class="comp-card">
+          <div class="comp-title">🏛️ Architect (Exam Level)</div>
+          "How should we design our indexer cluster for 5TB/day with geo-redundancy?"<br><br>
+          "Which data sources give the best signal-to-noise for detecting lateral movement?"<br><br>
+          "How do we build a detection pipeline that scales as the company grows 10x?"
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">A.1</span>
+          <span class="lesson-title">Splunk Components — What Each One Does at Scale</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="explain-box">
+            <div class="label">You know these — here's the architect view</div>
+            At scale, each component becomes a cluster or a service. The architect decides WHICH topology fits the business.
+          </div>
+          <ul class="key-list">
+            <li><strong>Universal Forwarder (UF)</strong> — Lightweight agent. No parsing. Sends raw data. You deploy via Deployment Server. At scale: thousands of UFs across servers, endpoints, cloud VMs.</li>
+            <li><strong>Heavy Forwarder (HF)</strong> — Parses and filters before sending. Used when you need to reduce data volume or route data to different indexes. Acts as a "data filter" layer.</li>
+            <li><strong>Indexer Cluster</strong> — Multiple indexers working together. Provides redundancy (replication factor) and search performance. Architect decides: How many peers? What replication factor? On-prem or cloud?</li>
+            <li><strong>Search Head Cluster</strong> — Multiple search heads. Load balances user searches. Critical for large SOC teams. Architect designs: How many SHs? Deployer for config management.</li>
+            <li><strong>Deployment Server</strong> — You already know this. Architect concern: What happens when you have 50,000 forwarders? Scaling, client groups, serverclasses.</li>
+            <li><strong>License Master / Manager</strong> — Controls daily indexing volume. Architect must understand licensing implications of data onboarding decisions.</li>
+          </ul>
+          <div class="tip-box">
+            <div class="label">Exam tip</div>
+            The exam will ask about "distributed search" — this is when search heads query multiple indexers. You route searches across sites. Understand: search factor vs replication factor. Search factor = how many searchable copies. Replication factor = total copies stored.
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">A.2</span>
+          <span class="lesson-title">New Concepts You Need to Understand</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <ul class="key-list">
+            <li><strong>Splunk Enterprise Security (ES)</strong> — A premium app on top of Splunk. Adds dashboards for security use cases: incident review, risk-based alerting, threat intelligence framework, asset/identity management. The exam lives in ES world.</li>
+            <li><strong>Splunk SOAR (Security Orchestration, Automation, Response)</strong> — Automates responses to alerts. Think: alert fires → SOAR automatically blocks an IP, creates a ticket, and notifies the team. No human needed.</li>
+            <li><strong>UEBA (User and Entity Behavior Analytics)</strong> — Detects unusual behavior by learning "normal." Example: user usually logs in from NYC at 9am — suddenly they log in from Russia at 3am. UEBA flags it.</li>
+            <li><strong>CIM (Common Information Model)</strong> — A Splunk framework that normalizes data. Different firewalls call things differently. CIM says: let's all call it "src_ip" and "dest_ip." Makes searches work across all data sources.</li>
+            <li><strong>Data Mesh / Data Lake</strong> — Modern architectures for storing massive amounts of security data cheaply and querying it when needed. The architect designs these.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <div class="page-nav-btn" onclick="show('overview')">
+          <span>‹</span>
+          <div><span class="pnb-label">Back</span><span class="pnb-title">Overview</span></div>
+        </div>
+        <div class="page-nav-btn next" onclick="show('d1')">
+          <span>›</span>
+          <div><span class="pnb-label">Next Domain</span><span class="pnb-title">Threat Intelligence</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOMAIN 1 -->
+    <div id="d1" class="panel">
+      <div class="section-header">
+        <div class="section-num">01</div>
+        <div class="section-title">Advanced Threat Intelligence & Analysis</div>
+        <div class="section-pct">5% of exam (~6 questions)</div>
+      </div>
+
+      <div class="tip-box">
+        <div class="label">Lowest weight domain — study smart</div>
+        Only 5% of the exam. Learn the concepts and vocabulary, don't memorize every detail. Focus on understanding the intelligence lifecycle and how it connects to Splunk ES.
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">1.1</span>
+          <span class="lesson-title">What is Threat Intelligence?</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="explain-box">
+            <div class="label">Simple explanation</div>
+            Threat intelligence is information about known attackers, attack methods, and indicators of compromise (IOCs). IOCs are "fingerprints" of attacks — like a suspicious IP address, a malware file hash, or a domain name used by hackers.
+          </div>
+          <div class="analogy-box">
+            <div class="label">Analogy</div>
+            Think of it like a neighborhood watch group sharing descriptions of known burglars. "Watch out for this license plate, this guy broke into 3 houses last week." Threat intel is that — but for cyber attacks.
+          </div>
+
+          <p class="sub-heading">Intelligence Sources</p>
+          <div class="comparison-grid">
+            <div class="comp-card">
+              <div class="comp-title">Open Source (OSINT)</div>
+              Free, public sources. Examples: VirusTotal (malware hashes), AlienVault OTX, MITRE ATT&CK framework, government CISA advisories.
+            </div>
+            <div class="comp-card">
+              <div class="comp-title">Commercial</div>
+              Paid services with curated, high-quality intelligence. Examples: Recorded Future, CrowdStrike Intel, Mandiant. Better data, more reliable, but costs money.
+            </div>
+          </div>
+
+          <p class="sub-heading">The Threat Intelligence Lifecycle</p>
+          <ul class="key-list">
+            <li><strong>Collection</strong> — Gather intel from OSINT + commercial sources</li>
+            <li><strong>Curation</strong> — Filter out false positives, duplicates, expired IOCs</li>
+            <li><strong>Evaluation/Confidence Scoring</strong> — How reliable is this intel? Is it from a trusted source? Recent? Specific?</li>
+            <li><strong>Integration</strong> — Feed into Splunk ES as threat intelligence sources. ES uses these to automatically flag matching events.</li>
+            <li><strong>Maintenance</strong> — IOCs expire! An IP that was malicious 2 years ago may be clean now. Regular cleanup is essential.</li>
+          </ul>
+
+          <div class="explain-box">
+            <div class="label">In Splunk ES</div>
+            Splunk ES has a Threat Intelligence framework. You add intel sources (CSV files, TAXII feeds, REST APIs). ES automatically matches events against these IOCs and highlights them in the Incident Review dashboard.
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">1.2–1.3</span>
+          <span class="lesson-title">Adversary Emulation & Threat Modeling</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="explain-box">
+            <div class="label">MITRE ATT&CK Framework</div>
+            The most important framework for this domain. MITRE ATT&CK catalogs all known attacker techniques organized by phases (Initial Access, Execution, Persistence, etc.). An architect uses this to: (1) Map your detections to attack techniques, (2) Find gaps where you have NO detection, (3) Prioritize which detections to build.
+          </div>
+          <div class="analogy-box">
+            <div class="label">Adversary Emulation — simple version</div>
+            Red team (ethical hackers) pretend to be real attackers using real attacker techniques from threat intel. Then blue team (defenders) checks if their detections caught it. This tests if your security actually works — not just if it's configured.
+          </div>
+          <ul class="key-list">
+            <li><strong>Threat Modeling</strong> — Systematically asking "what would an attacker target?" For a bank: the wire transfer system. For a hospital: patient records. Then design defenses around those targets.</li>
+            <li><strong>Intelligence-Informed Emulation</strong> — Instead of random red team exercises, use actual intel about threat actors that target YOUR industry. A healthcare org should practice defending against ransomware groups known to target hospitals.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title">Domain 1 — Quick Check</div>
+        <div class="quiz-q">
+          <div class="q-text">1. An organization wants to reduce false positives in their threat intelligence feed. Which lifecycle phase should they focus on improving?</div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="answer(this,'wrong')">A. Collection</div>
+            <div class="quiz-opt" onclick="answer(this,'correct')">B. Curation and confidence scoring</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">C. Integration into Splunk ES</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">D. Initial deployment of TAXII feeds</div>
+          </div>
+          <div class="quiz-explain">Curation filters out low-quality, expired, or inaccurate IOCs. Confidence scoring helps prioritize high-quality intel. These directly reduce false positives. Collection just gathers everything — more is not better without curation.</div>
+        </div>
+      </div>
+
+      <!-- DOMAIN 1 MCQ BANK -->
+      <div class="mcq-section" id="mcq-d1">
+        <div class="mcq-header" onclick="toggleMCQ('d1')">
+          <span class="mcq-icon">🎯</span>
+          <span class="mcq-title">Domain 1 — Exam-Style MCQ Bank</span>
+          <span class="mcq-count">7 Questions</span>
+          <span class="mcq-toggle">▾</span>
+        </div>
+        <div class="mcq-body">
+          <div class="mcq-score-bar">
+            <span>Score:</span><span class="score-val" id="score-d1">0/0</span>
+            <span style="flex:1"></span>
+            <button class="mcq-reset-btn" onclick="resetMCQ('d1')">↺ Reset</button>
+          </div>
+
+          <div class="quiz-q" data-domain="d1">
+            <div class="q-text">MCQ 1.1 — A security architect wants to integrate threat intelligence into Splunk ES. Which format is MOST commonly used to share standardized threat intelligence feeds between platforms?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. CSV flat files only</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">B. JSON over REST API only</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">C. STIX/TAXII</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. XML SOAP feeds</div>
+            </div>
+            <div class="quiz-explain">STIX (Structured Threat Information Expression) is the standard format for threat intel data. TAXII (Trusted Automated Exchange of Intelligence Information) is the transport protocol. Together they are the industry standard for sharing threat intelligence between platforms and into Splunk ES.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d1">
+            <div class="q-text">MCQ 1.2 — An IOC (IP address) was flagged as malicious 18 months ago. It appeared in no new threat reports since then. What should the architect recommend?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. Keep it — all IOCs should be retained permanently</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">B. Remove or expire it — stale IOCs increase false positives and reduce intel quality</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">C. Move it to a separate "historical" index</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. Lower its alert severity from high to medium</div>
+            </div>
+            <div class="quiz-explain">IOC maintenance is a key lifecycle step. IP addresses change ownership frequently. A malicious IP from 18 months ago may now belong to a legitimate organization. Keeping stale IOCs causes false positives (alerting on legitimate traffic) and degrades analyst trust in the system. Regular expiration of aged IOCs is an architect best practice.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d1">
+            <div class="q-text">MCQ 1.3 — A healthcare organization wants to prioritize which attacks to defend against. What is the BEST approach to threat modeling?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. Use generic threat models from the internet and apply them as-is</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">B. Focus only on external attackers since insider threats are rare</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">C. Research threat actors known to target healthcare, map their techniques to the organization's crown jewel assets (patient data, billing systems)</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. Model threats based on what competitors were attacked with last year</div>
+            </div>
+            <div class="quiz-explain">Intelligence-informed threat modeling means using real threat actor profiles relevant to YOUR industry. Healthcare orgs face specific threats — ransomware groups targeting patient data, nation-state actors targeting medical research. Crown jewels (most valuable assets) are the first modeling targets. Generic models waste resources defending against irrelevant threats.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d1">
+            <div class="q-text">MCQ 1.4 — What does MITRE ATT&CK provide that helps a security architect find detection gaps?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. A list of known malware hashes to block</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">B. A comprehensive catalog of attacker techniques organized by attack phase, allowing architects to map existing detections and identify uncovered techniques</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">C. A scoring system for firewall rule effectiveness</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. Vendor-specific Splunk detection rules</div>
+            </div>
+            <div class="quiz-explain">MITRE ATT&CK is a matrix of every known attacker technique (e.g., Credential Dumping T1003, Lateral Movement T1021). By mapping your Splunk detection rules to these techniques, you get a visual coverage map — green = detected, red = blind spot. This gap analysis tells you exactly where to invest in new detections.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d1">
+            <div class="q-text">MCQ 1.5 — What is the difference between a tactical IOC and a strategic threat intelligence report?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'correct')">A. Tactical IOCs (IPs, hashes, domains) are for immediate detection; strategic reports inform long-term security program decisions by describing attacker motivations and trends</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">B. Tactical IOCs are high confidence; strategic reports are low confidence</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">C. Tactical IOCs come from commercial vendors; strategic reports come from OSINT</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. There is no meaningful difference</div>
+            </div>
+            <div class="quiz-explain">Threat intelligence has multiple levels. Tactical = actionable indicators to feed into SIEM right now (block this IP, this hash). Operational = TTPs (how attackers operate). Strategic = trends, geopolitical context, which threat groups are active — used to plan the security program roadmap. An architect consumes all three levels.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d1">
+            <div class="q-text">MCQ 1.6 — During a purple team exercise, a red team uses an advanced technique that the blue team fails to detect. What is the MOST valuable outcome of this exercise?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. Proof that the security team needs to be replaced</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">B. Justification to purchase more security tools</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">C. A specific, validated detection gap that the architect can now prioritize addressing with new Splunk detection rules</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. A report showing the organization failed its security audit</div>
+            </div>
+            <div class="quiz-explain">Purple team exercises are not about "passing" or "failing" — they're about finding and fixing gaps. A missed detection is valuable intelligence: you now know exactly what to build. The architect takes the output and creates new correlation rules, adds new data sources, or adjusts SOAR playbooks to close the gap. This is continuous improvement.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d1">
+            <div class="q-text">MCQ 1.7 — A Splunk ES architect wants to automatically enrich alerts with threat intelligence data when a known-bad IP is observed. Which Splunk ES feature enables this?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. Splunk DB Connect</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">B. The Threat Intelligence Management framework in Splunk ES, which automatically matches events against loaded threat intel sources</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">C. A custom lookup table manually updated weekly</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. Splunk SOAR webhook integration</div>
+            </div>
+            <div class="quiz-explain">Splunk ES has a built-in Threat Intelligence Management framework. You load intel sources (TAXII feeds, CSV, REST API). ES automatically runs correlation searches that match incoming events against these IOCs and creates threat intel match events. This is automatic, real-time enrichment — no manual lookup needed.</div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="docs-box">
+        <div class="docs-box-title">📚 Official Splunk Docs — Domain 1</div>
+        <div class="docs-links">
+          <a class="docs-link" href="https://help.splunk.com/en/splunk-enterprise-security-8/user-guide/8.0/threat-intelligence/about-threat-intelligence-in-splunk-enterprise-security" target="_blank">
+            <span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Threat Intelligence in Splunk ES</div><div class="dl-desc">About threat intelligence, TAXII feeds, STIX, and IOC management in ES</div></div><span class="dl-arrow">↗</span>
+          </a>
+          <a class="docs-link" href="https://attack.mitre.org/" target="_blank">
+            <span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">MITRE ATT&CK Framework</div><div class="dl-desc">Official framework — browse all attacker techniques by tactic</div></div><span class="dl-arrow">↗</span>
+          </a>
+          <a class="docs-link" href="https://research.splunk.com/" target="_blank">
+            <span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Threat Research Team (STRT)</div><div class="dl-desc">Threat intel, detection research, and adversary emulation content</div></div><span class="dl-arrow">↗</span>
+          </a>
+          <a class="docs-link" href="https://lantern.splunk.com/Security/UCE/Threat_intelligence" target="_blank">
+            <span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Lantern — Threat Intelligence Use Cases</div><div class="dl-desc">Practical threat intel integration patterns and use cases</div></div><span class="dl-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+      <div class="page-nav">
+        <div class="page-nav-btn" onclick="show('basics')">
+          <span>‹</span>
+          <div><span class="pnb-label">Previous</span><span class="pnb-title">Your Foundation</span></div>
+        </div>
+        <div class="page-nav-btn home-center" onclick="show('overview')">🏠 Home</div>
+        <div class="page-nav-btn next" onclick="show('d2')">
+          <span>›</span>
+          <div><span class="pnb-label">Next Domain</span><span class="pnb-title">Security Data Mgmt</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOMAIN 2 -->
+    <div id="d2" class="panel">
+      <div class="section-header">
+        <div class="section-num">02</div>
+        <div class="section-title">Security Data Management</div>
+        <div class="section-pct">20% of exam (~24 questions)</div>
+      </div>
+
+      <div class="explain-box">
+        <div class="label">Most important domain</div>
+        20% of the exam. This is the closest domain to what you already know (forwarders, indexers, data sources). The architect level asks: WHICH data to collect, HOW to store it, and HOW to make it all work together.
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">2.1–2.3</span>
+          <span class="lesson-title">Data Sources — What to Collect and Why</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="explain-box">
+            <div class="label">Core concept: Signal vs. Noise</div>
+            Not all data is equally useful. Some data generates thousands of events per second with few useful security signals (noise). Some data generates fewer events but every one is important (signal). The architect must choose wisely because storage costs money and too much data slows down searches.
+          </div>
+
+          <p class="sub-heading">High Value Data Sources</p>
+          <ul class="key-list">
+            <li><strong>EDR (Endpoint Detection & Response)</strong> — Like CrowdStrike, Carbon Black. Records every process, file, network connection on an endpoint. HIGH SIGNAL. Better than plain Windows event logs alone.</li>
+            <li><strong>Identity & Authentication Logs</strong> — Active Directory, Azure AD, Okta. Who logged in, from where, to what. Critical for detecting compromised accounts.</li>
+            <li><strong>Network Flow (NetFlow/VPC Flow)</strong> — Records: "source IP talked to dest IP on port X for Y bytes." Doesn't capture content but shows WHO is talking to WHO. Great for detecting lateral movement.</li>
+            <li><strong>DNS Logs</strong> — Every domain lookup. Attackers use DNS for command-and-control. Huge value for detecting malware callbacks.</li>
+            <li><strong>Asset & Vulnerability Management</strong> — What assets exist? What vulnerabilities do they have? Context for prioritizing alerts. (If a critical server is vulnerable, alerts about it get higher priority.)</li>
+          </ul>
+
+          <div class="comparison-grid">
+            <div class="comp-card">
+              <div class="comp-title">⚡ High Signal, High Noise</div>
+              <strong>Packet Capture (PCAP)</strong> — Full network content. Extremely detailed but generates enormous data volume. Usually only for specific segments or triggered captures.
+            </div>
+            <div class="comp-card">
+              <div class="comp-title">✅ High Signal, Lower Noise</div>
+              <strong>EDR Process Flow</strong> — Process telemetry from endpoint agents. Better than raw Windows Event Logs because it's pre-filtered and richer context.
+            </div>
+          </div>
+
+          <div class="tip-box">
+            <div class="label">Exam scenario tip</div>
+            If a question asks "an organization has limited storage — which data source provides the best coverage for detecting insider threats?", think: UEBA + Identity logs + EDR. They give good signal without overwhelming volume.
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">2.4</span>
+          <span class="lesson-title">Non-Standard Environments: OT/ICS, Legacy Systems</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="explain-box">
+            <div class="label">What is OT/ICS?</div>
+            OT = Operational Technology. ICS = Industrial Control Systems. These are systems controlling physical things — factory machines, power grids, water treatment plants. They often run OLD operating systems (Windows XP!) and cannot have traditional security agents installed.
+          </div>
+          <ul class="key-list">
+            <li><strong>Challenge</strong> — Can't install UF on a 20-year-old PLC (Programmable Logic Controller) running an industrial process.</li>
+            <li><strong>Solution: Out-of-Band / Passive Monitoring</strong> — Use network taps or SPAN ports to passively copy network traffic. A separate sensor reads it and forwards to Splunk. No agent on the OT device itself.</li>
+            <li><strong>Legacy Systems</strong> — Older systems may use syslog (old-school log forwarding). Use a syslog server as an intermediary — it receives syslog and forwards to Splunk via UF or HF.</li>
+            <li><strong>Specialized Protocols</strong> — OT environments use industrial protocols like Modbus, DNP3, PROFINET. Need specialized parsers/TAs (Technology Add-ons) to understand this data.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">2.5</span>
+          <span class="lesson-title">Data Lifecycle Management — Hot, Warm, Cold</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="analogy-box">
+            <div class="label">Analogy — Like your fridge and pantry</div>
+            Hot data = in the fridge (fast access, expensive). Warm data = in the pantry (medium speed, cheaper). Cold data = in the basement freezer (slow access, very cheap). You put today's leftovers in the fridge. Last month's stuff in the freezer.
+          </div>
+          <ul class="key-list">
+            <li><strong>Hot Bucket</strong> — Most recent data. Actively being written to. Stored on fast SSDs. Most expensive per GB.</li>
+            <li><strong>Warm Bucket</strong> — No longer being written to but still frequently searched. Moved from hot after a time period.</li>
+            <li><strong>Cold Bucket</strong> — Older data. Rarely searched. Moved to cheaper/slower storage (HDDs, object storage like S3).</li>
+            <li><strong>Frozen Bucket</strong> — Archived data. Splunk removes it from index but you can archive it. Can be thawed back if needed for forensics.</li>
+            <li><strong>Data Retention Policy</strong> — How long to keep each type of data. Compliance requirements (PCI: 1 year, some regulations: 7 years) drive this. Architect must design retention that meets legal requirements within budget.</li>
+            <li><strong>Data Residency</strong> — Some regulations require data to stay in a specific country/region. EU data must stay in EU (GDPR). Architect designs where indexers are physically located.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">2.6</span>
+          <span class="lesson-title">CIM — The Common Information Model</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="explain-box">
+            <div class="label">Why CIM matters (a lot)</div>
+            You have 50 different firewalls from 10 different vendors. Cisco calls the source IP "src_addr". Palo Alto calls it "src_ip". Fortinet calls it "srcip". Without normalization, you'd need a different search for each. CIM says: map everything to a standard field name. Then ONE search works on ALL of them.
+          </div>
+          <div class="code-block">
+            <span class="comment"># WITHOUT CIM - need separate searches per vendor:</span><br>
+            index=cisco_fw src_addr=192.168.1.5<br>
+            index=palo_fw src_ip=192.168.1.5<br>
+            index=fortinet srcip=192.168.1.5<br><br>
+            <span class="comment"># WITH CIM normalization - ONE search:</span><br>
+            <span class="keyword">tag</span>=<span class="value">network</span> src=192.168.1.5
+          </div>
+          <ul class="key-list">
+            <li><strong>CIM Data Models</strong> — Predefined schemas for different data types: Network Traffic, Authentication, Endpoint, Web, etc.</li>
+            <li><strong>Technology Add-ons (TAs)</strong> — Splunk apps that do the field mapping from vendor-specific fields to CIM fields. You install the Palo Alto TA, it maps Palo's fields to CIM automatically.</li>
+            <li><strong>CEF (Common Event Format)</strong> — Another normalization standard, used by some SIEM tools. Similar concept to CIM but a different standard.</li>
+            <li><strong>Why it matters for ES</strong> — Splunk Enterprise Security is built on CIM. ALL ES features (correlation searches, dashboards, threat intelligence matching) only work if your data is CIM-compliant.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">2.7–2.8</span>
+          <span class="lesson-title">Advanced Analytics: ML, AI, Data Mesh, Federated Search</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <ul class="key-list">
+            <li><strong>Machine Learning (MLTK)</strong> — Splunk Machine Learning Toolkit lets you build models inside Splunk. Use cases: detect anomalous login times, forecast storage growth, cluster similar events.</li>
+            <li><strong>Behavioral Analysis (UEBA)</strong> — Instead of rules ("alert if X happens"), learn what's normal and alert on deviations. Better at catching new attack types that don't match known signatures.</li>
+            <li><strong>Data Mesh</strong> — Architecture where different teams own their own data domains but make data available to others. Decentralized. Reduces bottleneck on central data team. Good for large organizations.</li>
+            <li><strong>Data Lake</strong> — Centralized repository for ALL data, structured and unstructured, raw format. Cheap storage (like S3). Query it when needed. Good for long-term retention of large volumes.</li>
+            <li><strong>Message Bus (Kafka)</strong> — A pipeline that buffers and routes data between producers and consumers. Splunk can be a consumer. Helps handle massive data volumes without overwhelming indexers.</li>
+            <li><strong>Federated Search</strong> — Search across multiple Splunk deployments or even non-Splunk data stores FROM a single search head. You don't have to move all data to one place — query it in place.</li>
+          </ul>
+          <div class="analogy-box">
+            <div class="label">Federated Search analogy</div>
+            Instead of moving all books from every library in the country to one mega-library, you use a search system that asks all libraries at once and combines results. The books (data) stay where they are.
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title">Domain 2 — Quick Check</div>
+        <div class="quiz-q">
+          <div class="q-text">2. An organization ingests Windows Event Logs AND an EDR solution. Both cover endpoint activity. What is the MAIN reason to prefer EDR process telemetry over raw Windows Event Logs for security monitoring?</div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="answer(this,'wrong')">A. EDR is cheaper to store</div>
+            <div class="quiz-opt" onclick="answer(this,'correct')">B. EDR provides higher signal with richer context and lower noise</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">C. Windows Event Logs require a separate parser</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">D. EDR integrates with CIM automatically</div>
+          </div>
+          <div class="quiz-explain">EDR solutions like CrowdStrike or Carbon Black provide pre-filtered, enriched process telemetry. Raw Windows Event Logs generate massive volume with many low-value events. EDR gives you the signal (what matters) with less noise. This is a key architect trade-off.</div>
+        </div>
+
+        <div class="quiz-q">
+          <div class="q-text">3. A company stores 90 days of hot/warm data and needs to retain security logs for 3 years for compliance. What is the BEST architecture approach?</div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="answer(this,'wrong')">A. Increase indexer storage to hold 3 years of hot data</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">B. Delete data after 90 days to save costs</div>
+            <div class="quiz-opt" onclick="answer(this,'correct')">C. Implement storage tiering — move data to cold/frozen storage after 90 days, archive to object storage for 3 years</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">D. Forward all logs to a separate SIEM for long-term storage</div>
+          </div>
+          <div class="quiz-explain">Storage tiering is the architect's solution. Recent data on fast (expensive) storage for quick searching. Older compliance data on cheap cold/frozen storage (like S3). This balances cost and compliance requirements — a core architect decision.</div>
+        </div>
+      </div>
+
+      <!-- DOMAIN 2 MCQ BANK -->
+      <div class="mcq-section" id="mcq-d2">
+        <div class="mcq-header" onclick="toggleMCQ('d2')">
+          <span class="mcq-icon">🎯</span>
+          <span class="mcq-title">Domain 2 — Exam-Style MCQ Bank</span>
+          <span class="mcq-count">8 Questions</span>
+          <span class="mcq-toggle">▾</span>
+        </div>
+        <div class="mcq-body">
+          <div class="mcq-score-bar">
+            <span>Score:</span><span class="score-val" id="score-d2">0/0</span>
+            <span style="flex:1"></span>
+            <button class="mcq-reset-btn" onclick="resetMCQ('d2')">↺ Reset</button>
+          </div>
+
+          <div class="quiz-q" data-domain="d2">
+            <div class="q-text">MCQ 2.1 — An organization needs to monitor a factory floor with legacy PLCs that cannot have software installed. What monitoring strategy should the architect recommend?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. Deploy Splunk Universal Forwarder on each PLC</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">B. Skip monitoring — OT devices are not in scope</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">C. Use network SPAN ports or TAPs for passive traffic capture, with OT-aware sensors forwarding to Splunk</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. Monitor only the IT network and assume OT is safe</div>
+            </div>
+            <div class="quiz-explain">Passive/out-of-band monitoring is the correct approach for OT/ICS. Network TAPs create a passive copy of traffic without touching the devices. OT-specific security tools (Claroty, Dragos) understand industrial protocols and forward normalized data to Splunk. No agent is required on the OT device, preserving availability and stability.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d2">
+            <div class="q-text">MCQ 2.2 — Which statement BEST describes the purpose of the Splunk CIM (Common Information Model)?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. It compresses data to reduce storage costs</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">B. It normalizes field names from different data sources to a standard schema so searches work across all sources uniformly</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">C. It encrypts sensitive log fields in transit</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. It manages which users can access which indexes</div>
+            </div>
+            <div class="quiz-explain">CIM is Splunk's data normalization framework. Different vendors name fields differently. CIM standardizes them — src, dest, user, action. Splunk ES correlation searches are built on CIM fields, so data MUST be CIM-compliant for ES to work. Technology Add-ons (TAs) perform the field mapping automatically.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d2">
+            <div class="q-text">MCQ 2.3 — A large organization has security data in multiple Splunk deployments across 3 regions. Analysts need to search all regions from one interface without consolidating data. What should the architect implement?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. Replicate all data to a central indexer cluster</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">B. Give analysts VPN access to each regional Splunk</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">C. Implement Splunk Federated Search to query all deployments from a single search head</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. Export all data nightly to a data warehouse</div>
+            </div>
+            <div class="quiz-explain">Federated Search allows a single Splunk search head to query multiple Splunk deployments (and even non-Splunk sources) without moving data. Data stays in its regional location — ideal for data residency compliance. Analysts get one unified search interface while the underlying data stays distributed.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d2">
+            <div class="q-text">MCQ 2.4 — An architect must balance security monitoring coverage against storage costs. Which data source combination provides the BEST signal-to-noise ratio for detecting compromised user accounts?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. Full packet capture + all Windows Event Logs</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">B. Identity/authentication logs (AD, Okta) + EDR behavioral telemetry + UEBA baselines</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">C. Firewall logs + antivirus scan results</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. DNS logs + web proxy logs only</div>
+            </div>
+            <div class="quiz-explain">For compromised account detection, authentication logs show where/when/how users log in, EDR shows what those accounts do on endpoints, and UEBA learns normal behavior patterns. This combination is high-signal, lower-volume compared to full packet capture or all Windows Events. It targets the specific threat (account compromise) efficiently.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d2">
+            <div class="q-text">MCQ 2.5 — What is the PRIMARY purpose of a message bus (like Apache Kafka) in a Splunk security data architecture?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. To replace Splunk indexers with cheaper infrastructure</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">B. To buffer, route, and decouple high-volume data streams so indexers are not overwhelmed by data spikes</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">C. To encrypt data before it reaches Splunk</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. To provide a backup copy of all indexed data</div>
+            </div>
+            <div class="quiz-explain">Message buses like Kafka sit between data producers and Splunk indexers. During traffic spikes, Kafka absorbs the burst and feeds Splunk at a consistent rate. It also enables data routing — send the same events to multiple consumers (Splunk + data lake + analytics platform). This is critical in enterprise architectures handling millions of events per second.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d2">
+            <div class="q-text">MCQ 2.6 — A company's EU operations must comply with GDPR data residency requirements for security logs. What architecture decision is MOST important?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. Encrypt all EU logs with AES-256</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">B. Deploy Splunk indexers physically located in the EU so EU data never leaves EU jurisdiction</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">C. Tag EU logs with a GDPR label in Splunk</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. Give EU analysts a separate login</div>
+            </div>
+            <div class="quiz-explain">GDPR data residency means EU personal data must be stored and processed within the EU. This requires EU-region Splunk indexers — either on-premises in an EU datacenter or Splunk Cloud on an EU cloud region (AWS eu-west, Azure West Europe, etc.). Encryption and tagging don't satisfy residency requirements — physical location matters.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d2">
+            <div class="q-text">MCQ 2.7 — What distinguishes a Data Lake from traditional Splunk hot/warm/cold storage?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. A data lake stores only structured, indexed data</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">B. A data lake stores massive volumes of raw, unprocessed data cheaply (e.g., S3) and is queried on-demand — ideal for long-term retention and big data analytics</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">C. A data lake replaces Splunk entirely</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. A data lake only stores structured database logs</div>
+            </div>
+            <div class="quiz-explain">Data lakes (like S3, Azure Data Lake) store everything raw and cheap. Unlike Splunk's indexed storage (which is optimized for fast search but expensive), data lakes trade search speed for massive scale and low cost. Architects use them for compliance archives and big data analytics. Splunk can query data lakes via Federated Search or SmartStore.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d2">
+            <div class="q-text">MCQ 2.8 — An architect wants to implement ML-based anomaly detection in Splunk. A new analyst asks why not just use rule-based alerts. What is the BEST answer?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. ML is always more accurate than rules</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">B. Rules are too complex to write for experienced analysts</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">C. Rules only catch known attack patterns; ML detects novel or unknown attack behaviors by learning what is normal and flagging deviations — even if no rule matches</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. Rules generate too many false positives compared to ML</div>
+            </div>
+            <div class="quiz-explain">Rules are excellent for known attacks with defined signatures. ML/behavioral analytics catch zero-days, novel techniques, and insider threats where no rule exists. A sophisticated attacker who knows your detection rules can evade them — but anomaly detection based on behavioral baselines is much harder to evade. Architects use both: rules for speed, ML for coverage.</div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="docs-box">
+        <div class="docs-box-title">📚 Official Splunk Docs — Domain 2</div>
+        <div class="docs-links">
+          <a class="docs-link" href="https://help.splunk.com/en/?resourceId=common_information_model_data_managemenet" target="_blank">
+            <span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Common Information Model (CIM)</div><div class="dl-desc">Official CIM documentation — data models, normalization, field aliases</div></div><span class="dl-arrow">↗</span>
+          </a>
+          <a class="docs-link" href="https://help.splunk.com/en/?resourceId=Splunk_Indexer_Aboutindexesandindexers" target="_blank">
+            <span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Indexing & Storage</div><div class="dl-desc">Buckets, retention, SmartStore, cold/frozen storage tiers</div></div><span class="dl-arrow">↗</span>
+          </a>
+          <a class="docs-link" href="https://help.splunk.com/en/?resourceId=Platform_FederatedSearch_fsoptions" target="_blank">
+            <span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Federated Search</div><div class="dl-desc">Search across multiple Splunk deployments and data sources</div></div><span class="dl-arrow">↗</span>
+          </a>
+          <a class="docs-link" href="https://help.splunk.com/en/?resourceId=MLApp_User_AboutMLTK" target="_blank">
+            <span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Machine Learning Toolkit (MLTK)</div><div class="dl-desc">ML-based analytics, anomaly detection, and behavioral analysis</div></div><span class="dl-arrow">↗</span>
+          </a>
+          <a class="docs-link" href="https://help.splunk.com/en/security-offerings/splunk-user-behavior-analytics" target="_blank">
+            <span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk UEBA (User Behavior Analytics)</div><div class="dl-desc">Behavioral analytics, insider threat detection, anomaly scoring</div></div><span class="dl-arrow">↗</span>
+          </a>
+          <a class="docs-link" href="https://lantern.splunk.com/Security/UCE/Data_onboarding" target="_blank">
+            <span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Lantern — Data Onboarding</div><div class="dl-desc">Practical guides for onboarding security data sources</div></div><span class="dl-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+      <div class="page-nav">
+        <div class="page-nav-btn" onclick="show('d1')">
+          <span>‹</span>
+          <div><span class="pnb-label">Previous</span><span class="pnb-title">Threat Intelligence</span></div>
+        </div>
+        <div class="page-nav-btn home-center" onclick="show('overview')">🏠 Home</div>
+        <div class="page-nav-btn next" onclick="show('d3')">
+          <span>›</span>
+          <div><span class="pnb-label">Next Domain</span><span class="pnb-title">Incident Response</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOMAIN 3 -->
+    <div id="d3" class="panel">
+      <div class="section-header">
+        <div class="section-num">03</div>
+        <div class="section-title">Advanced Incident Response & Management</div>
+        <div class="section-pct">10% of exam (~12 questions)</div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">3.1</span>
+          <span class="lesson-title">IR + ITSM: Making Security Part of the Business</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="explain-box">
+            <div class="label">Key concept: ITSM and ITIL</div>
+            ITSM = IT Service Management. ITIL = a framework for ITSM. These govern how IT changes and incidents are managed in a business. The architect must make security incidents play well within this system — not operate as a separate island.
+          </div>
+          <ul class="key-list">
+            <li><strong>Change Management</strong> — Every change to a system should go through a formal approval process. Why does security care? Because attackers exploit systems DURING changes, and unauthorized changes may BE attacks. Splunk should alert on changes that bypass the change management process.</li>
+            <li><strong>Incident Management Process</strong> — Security incidents should link to IT incident management (ServiceNow, Jira). Splunk SOAR can automatically create tickets when ES triggers a notable event.</li>
+            <li><strong>Problem Management</strong> — After incidents, root cause analysis. The architect ensures forensic data is retained long enough to support post-incident analysis.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">3.2–3.3</span>
+          <span class="lesson-title">Large-Scale Incident Response & Forensics</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="explain-box">
+            <div class="label">Large-scale IR — what it means</div>
+            A "large-scale incident" is a breach affecting hundreds of systems or the entire organization. Example: a ransomware attack encrypting thousands of servers. The response involves dozens of people, needs coordination, and happens under extreme pressure.
+          </div>
+          <ul class="key-list">
+            <li><strong>Incident Command Structure</strong> — Clear roles: Incident Commander, Technical Lead, Communications Lead, Legal, Executive stakeholders. The architect designs the PROCESS, not just the technology.</li>
+            <li><strong>Communication Plan</strong> — Who gets notified when? What do you tell executives vs. technical team vs. customers? Splunk ES dashboards can provide executive-level summaries while analysts see technical details.</li>
+            <li><strong>Forensics Readiness</strong> — The architect ensures: (1) Enough data is collected and retained, (2) Chain of custody for evidence, (3) Memory forensics capability (capturing RAM snapshots), (4) Splunk can search historical data for attacker activity going back months.</li>
+            <li><strong>Forensic Data Requirements</strong> — Full packet capture for key segments, detailed process logs from EDR, authentication logs, netflow. Without these, you can't reconstruct what the attacker did.</li>
+          </ul>
+          <div class="tip-box">
+            <div class="label">Exam tip</div>
+            Questions about large-scale IR often focus on: communication, coordination, forensic readiness, and how to ensure evidence integrity. Think "what does a Splunk architect need to pre-build before an incident happens?"
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title">Domain 3 — Quick Check</div>
+        <div class="quiz-q">
+          <div class="q-text">4. During a major security incident, the CISO needs a real-time view of affected systems while the SOC team needs detailed forensic data. What is the BEST approach?</div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="answer(this,'wrong')">A. Have analysts email updates to the CISO hourly</div>
+            <div class="quiz-opt" onclick="answer(this,'correct')">B. Build separate Splunk ES dashboards — an executive summary view and a detailed technical investigation view</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">C. Give the CISO full access to all analyst screens</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">D. Create a single unified dashboard for all users</div>
+          </div>
+          <div class="quiz-explain">Different stakeholders need different views during an incident. Executives need business impact and high-level status. Analysts need raw forensic data. Splunk ES supports role-based dashboards. This is an architect design decision.</div>
+        </div>
+      </div>
+
+      <!-- DOMAIN 3 MCQ BANK -->
+      <div class="mcq-section" id="mcq-d3">
+        <div class="mcq-header" onclick="toggleMCQ('d3')">
+          <span class="mcq-icon">🎯</span>
+          <span class="mcq-title">Domain 3 — Exam-Style MCQ Bank</span>
+          <span class="mcq-count">6 Questions</span>
+          <span class="mcq-toggle">▾</span>
+        </div>
+        <div class="mcq-body">
+          <div class="mcq-score-bar">
+            <span>Score:</span><span class="score-val" id="score-d3">0/0</span>
+            <span style="flex:1"></span>
+            <button class="mcq-reset-btn" onclick="resetMCQ('d3')">↺ Reset</button>
+          </div>
+
+          <div class="quiz-q" data-domain="d3">
+            <div class="q-text">MCQ 3.1 — A development team deploys a hotfix to production without going through the change management process. From a security perspective, why should Splunk alert on this?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. Hotfixes always introduce vulnerabilities</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">B. Change management is an IT policy issue, not a security issue</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">C. Unauthorized changes could be an attacker planting a backdoor or could introduce vulnerabilities — changes that bypass approval need immediate security review</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. Only changes to firewall rules need security review</div>
+            </div>
+            <div class="quiz-explain">Unauthorized changes are a major attack vector and indicator of compromise. Attackers who gain admin access often make changes to maintain persistence (backdoors, new accounts). Monitoring for changes that bypass the approved change management process is a security control. Splunk should alert on changes to critical systems that have no corresponding approved change ticket.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d3">
+            <div class="q-text">MCQ 3.2 — What is the PRIMARY purpose of a Security Incident Response Plan (IRP) from an architect's perspective?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. To document which tools the SOC uses</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">B. To satisfy a compliance checkbox requirement</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">C. To pre-define roles, communication chains, escalation paths, and technical procedures so the team can respond quickly under pressure without making decisions from scratch during a crisis</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. To train new SOC analysts</div>
+            </div>
+            <div class="quiz-explain">During a major incident, chaos is the enemy. An IRP pre-defines: who is the incident commander, who talks to executives, who handles legal/PR, what are the technical containment steps, what data to preserve. Decisions made in advance under calm conditions are far better than decisions made under fire. The architect designs the IRP alongside the technical systems.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d3">
+            <div class="q-text">MCQ 3.3 — For forensic investigations to be legally admissible, what must the architect ensure about evidence collected in Splunk?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. Evidence must be stored in a special "forensic" index</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">B. Chain of custody must be maintained — evidence must be preserved unmodified, with documented access controls and audit logs showing who accessed what and when</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">C. All evidence must be exported to a PDF report</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. Evidence only needs to be retained for 30 days</div>
+            </div>
+            <div class="quiz-explain">Legal admissibility requires chain of custody — proof that evidence was not altered. This means: immutable storage (write-once), strict access controls (only authorized personnel), and audit logs of every access. If an attacker's logs could have been modified by an insider, they lose evidentiary value in court. The architect builds these controls into the data pipeline.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d3">
+            <div class="q-text">MCQ 3.4 — During a ransomware incident, the security team needs to determine the attacker's initial entry point from 6 months ago. What Splunk capability is MOST critical for this investigation?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. Real-time alerting</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">B. Sufficient historical data retention with detailed event logs (authentication, process execution, network connections) going back far enough to find the initial compromise</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">C. A threat intelligence feed with the ransomware group's known IOCs</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. SOAR playbook for ransomware containment</div>
+            </div>
+            <div class="quiz-explain">Ransomware attackers typically dwell in networks for 2-6 months before encrypting. To find the initial entry point, you need logs going back that far. Without adequate retention, the forensic trail is gone. The architect's data retention design directly enables or blocks post-incident forensics. This is why retention policies must account for average attacker dwell time.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d3">
+            <div class="q-text">MCQ 3.5 — A major security incident occurs. The CISO needs updates every 30 minutes. Which approach should the architect have pre-built?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'correct')">A. An executive Splunk ES dashboard with auto-refreshing KPIs: affected systems count, incident status, containment progress — no manual analyst effort required</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">B. A process where analysts write email updates every 30 minutes</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">C. A weekly status report template</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. A conference bridge that runs 24/7</div>
+            </div>
+            <div class="quiz-explain">During an active incident, analysts cannot stop investigations to write status emails. Pre-built executive dashboards in Splunk ES that auto-refresh provide real-time situational awareness without distracting the technical team. The architect designs these dashboards before incidents happen — this is "forensics readiness" applied to communication.</div>
+          </div>
+
+          <div class="quiz-q" data-domain="d3">
+            <div class="q-text">MCQ 3.6 — What is the relationship between security incident management and ITIL problem management?</div>
+            <div class="quiz-options">
+              <div class="quiz-opt" onclick="answer(this,'wrong')">A. They are completely separate processes with no overlap</div>
+              <div class="quiz-opt" onclick="answer(this,'correct')">B. After a security incident is resolved, problem management drives root cause analysis and permanent fixes — the architect ensures security tools support both the reactive response and the post-incident improvement process</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">C. Problem management replaces incident management for recurring issues</div>
+              <div class="quiz-opt" onclick="answer(this,'wrong')">D. ITIL only applies to non-security IT issues</div>
+            </div>
+            <div class="quiz-explain">ITIL problem management finds and eliminates root causes so incidents don't recur. After a security breach, problem management asks: Why did our controls fail? What permanent fix prevents recurrence? The security architect integrates with the ITSM process — security incidents create problems, problems drive security improvements, and Splunk provides the forensic data for root cause analysis.</div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="docs-box">
+        <div class="docs-box-title">📚 Official Splunk Docs — Domain 3</div>
+        <div class="docs-links">
+          <a class="docs-link" href="https://help.splunk.com/en/splunk-enterprise-security-8/user-guide/8.0/investigations/about-investigations-in-splunk-enterprise-security" target="_blank">
+            <span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Investigations in Splunk ES</div><div class="dl-desc">Managing, coordinating, and documenting security incident investigations</div></div><span class="dl-arrow">↗</span>
+          </a>
+          <a class="docs-link" href="https://help.splunk.com/en/splunk-soar/soar-on-premises" target="_blank">
+            <span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk SOAR Documentation</div><div class="dl-desc">SOAR playbooks, case management, and incident response automation</div></div><span class="dl-arrow">↗</span>
+          </a>
+          <a class="docs-link" href="https://lantern.splunk.com/Security/UCE/Incident_response" target="_blank">
+            <span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Lantern — Incident Response</div><div class="dl-desc">IR patterns, forensics readiness, and response use cases</div></div><span class="dl-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+      <div class="page-nav">
+        <div class="page-nav-btn" onclick="show('d2')">
+          <span>‹</span>
+          <div><span class="pnb-label">Previous</span><span class="pnb-title">Security Data Mgmt</span></div>
+        </div>
+        <div class="page-nav-btn home-center" onclick="show('overview')">🏠 Home</div>
+        <div class="page-nav-btn next" onclick="show('d4')">
+          <span>›</span>
+          <div><span class="pnb-label">Next Domain</span><span class="pnb-title">Automation & SOAR</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOMAIN 4 -->
+    <div id="d4" class="panel">
+      <div class="section-header">
+        <div class="section-num">04</div>
+        <div class="section-title">Advanced Automation & Orchestration (SOAR)</div>
+        <div class="section-pct">10% of exam (~12 questions)</div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">4.1–4.2</span>
+          <span class="lesson-title">What is SOAR and Why Does it Matter?</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="explain-box">
+            <div class="label">SOAR = Security Orchestration, Automation, and Response</div>
+            Splunk SOAR (formerly Phantom) is a platform that automates security workflows called "playbooks." When an alert fires, instead of an analyst manually investigating for 30 minutes, SOAR runs automated steps in seconds.
+          </div>
+          <div class="analogy-box">
+            <div class="label">Analogy</div>
+            Imagine you're a doctor and every time a patient's heart rate spikes, you have to manually check vitals, look at their history, call a specialist, and order tests. SOAR is like having a robot nurse that does all those steps automatically and only calls you if the robot can't handle it.
+          </div>
+          <ul class="key-list">
+            <li><strong>Playbooks</strong> — Step-by-step automated workflows. Example playbook for phishing: (1) Extract URLs from email, (2) Check URLs against threat intel, (3) If malicious → block sender, quarantine email, create ticket, notify user's manager.</li>
+            <li><strong>Integrations / Connectors</strong> — SOAR connects to hundreds of tools: firewalls (block IP), ticketing (create ServiceNow ticket), email (quarantine messages), EDR (isolate host), Active Directory (disable account).</li>
+            <li><strong>Architecture Constraint — 4.1</strong> — Network design matters. If SOAR needs to call your firewall's API to block an IP, but the firewall is in a restricted network segment, the automation won't work. Architect must ensure SOAR has API access to all the tools it needs to orchestrate.</li>
+          </ul>
+
+          <p class="sub-heading">SOAR Architecture with Splunk ES</p>
+          <div class="arch-diagram">
+            <span class="node node-orange">Splunk ES</span>
+            <span class="arrow">→ notable event →</span>
+            <span class="node node-pink">Splunk SOAR</span>
+            <span class="arrow">→ runs playbook →</span>
+            <span class="node node-blue">Firewall / EDR / AD / Ticket</span>
+            <br><br>
+            <span style="font-size:11px; color: var(--muted);">ES detects the threat → SOAR responds automatically → tools take action</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">4.3–4.4</span>
+          <span class="lesson-title">Autonomous SOC & AI/ML for Detection</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="explain-box">
+            <div class="label">Autonomous SOC — what does it mean?</div>
+            An autonomous SOC handles routine security tasks without human involvement. Humans focus only on complex, novel threats. This is the goal — not replacing humans, but freeing them from repetitive work.
+          </div>
+          <ul class="key-list">
+            <li><strong>Tiered Automation</strong> — Tier 1 (known, low-risk alerts): fully automated. Tier 2 (medium confidence): automated with human approval. Tier 3 (novel threats): human-led with automation support.</li>
+            <li><strong>Mean Time to Respond (MTTR)</strong> — Key metric for automation success. Manual response: 2 hours. SOAR response: 2 minutes. Autonomous SOC reduces MTTR dramatically.</li>
+            <li><strong>AI/ML for Detection</strong> — Traditional rules: "alert if >10 failed logins." ML model: "alert if login pattern is statistically anomalous for this user." ML catches novel attacks that rules miss.</li>
+            <li><strong>UEBA in context</strong> — User Entity Behavior Analytics learns baseline behavior and flags deviations. Key for insider threats and compromised accounts where there's no known IOC to match.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title">Domain 4 — Quick Check</div>
+        <div class="quiz-q">
+          <div class="q-text">5. A SOC receives 500 phishing alerts per day. Analysts manually investigate each one, spending 15 minutes per alert. What is the BEST architectural recommendation?</div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="answer(this,'wrong')">A. Hire more analysts to handle the volume</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">B. Tune correlation rules to reduce the number of alerts</div>
+            <div class="quiz-opt" onclick="answer(this,'correct')">C. Build a SOAR playbook that automatically triages phishing alerts and only escalates confirmed malicious ones to analysts</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">D. Disable the phishing detection rule to reduce workload</div>
+          </div>
+          <div class="quiz-explain">SOAR automation is the architect's answer to alert volume. A well-designed playbook can automatically check URLs, verify sender reputation, look up threat intel, and auto-close false positives. Only real threats reach human analysts. This is the core value of SOAR.</div>
+        </div>
+      </div>
+
+      <div class="docs-box">
+        <div class="docs-box-title">📚 Official Splunk Docs — Domain 4</div>
+        <div class="docs-links">
+          <a class="docs-link" href="https://help.splunk.com/en/splunk-soar/soar-on-premises" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk SOAR On-Premises Docs</div><div class="dl-desc">Playbooks, automation, orchestration, app integrations</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://help.splunk.com/en/splunk-soar/soar-cloud" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk SOAR Cloud Docs</div><div class="dl-desc">Cloud-based SOAR deployment and automation</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://help.splunk.com/en/splunk-enterprise-security-8/user-guide/8.0/introduction/about-splunk-enterprise-security" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk ES + SOAR Integration</div><div class="dl-desc">How ES and SOAR work together for unified TDIR platform</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://lantern.splunk.com/Security" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Lantern — Security Use Cases</div><div class="dl-desc">SOAR use cases, playbook patterns, autonomous SOC design</div></div><span class="dl-arrow">↗</span></a>
+        </div>
+      </div>
+        </div>
+
+    <!-- DOMAIN 5 -->
+    <div id="d5" class="panel">
+      <div class="section-header">
+        <div class="section-num">05</div>
+        <div class="section-title">Scaling Cybersecurity Defenses & DevSecOps</div>
+        <div class="section-pct">15% of exam (~18 questions)</div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">5.1–5.2</span>
+          <span class="lesson-title">DevSecOps — Security Baked Into Development</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="explain-box">
+            <div class="label">What is DevSecOps?</div>
+            Traditional software development: Developers build the app → Security team reviews it at the end → Often finds 100 problems → Expensive to fix. DevSecOps: Security is integrated throughout the development process. Developers find security issues while coding, not after deployment.
+          </div>
+          <div class="analogy-box">
+            <div class="label">Analogy</div>
+            Building a house: old way = build the whole house, then invite a safety inspector who says "you need to tear down 3 walls." DevSecOps = safety inspector is on-site every day, issues caught when they're just nails in a stud, not full walls.
+          </div>
+          <ul class="key-list">
+            <li><strong>Detection as Code</strong> — Writing security detection rules (Splunk searches/alerts) as code, stored in version control (Git). Just like developers manage their code. Benefits: version history, code review, automated testing, can be deployed automatically.</li>
+            <li><strong>CI/CD Pipeline</strong> — Continuous Integration / Continuous Deployment. Automated pipeline that tests and deploys code changes. Security: run security scans in the pipeline. If code fails security scan → deployment blocked.</li>
+            <li><strong>Security Sensors in DevOps</strong> — Add security monitoring to the application build and deployment pipeline. Log every deployment, configuration change, and secret access.</li>
+          </ul>
+          <div class="code-block">
+            <span class="comment"># Detection as Code example — stored in Git:</span><br>
+            <span class="keyword">name:</span> <span class="value">Brute Force Detection</span><br>
+            <span class="keyword">search:</span> <span class="value">index=auth action=failure | stats count by user | where count > 10</span><br>
+            <span class="keyword">cron:</span> <span class="value">*/5 * * * *</span><br>
+            <span class="keyword">alert:</span> <span class="value">email, create_notable_event</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">5.3</span>
+          <span class="lesson-title">SBOM — Software Bill of Materials</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="explain-box">
+            <div class="label">What is an SBOM?</div>
+            A complete list of all software components inside an application — including third-party libraries and open-source packages. Like a nutrition label, but for software.
+          </div>
+          <div class="analogy-box">
+            <div class="label">Why it matters for security</div>
+            In 2021, Log4Shell (a massive vulnerability in the Log4j library) affected thousands of applications. Organizations with an SBOM could immediately search "do we use Log4j?" and know in minutes. Organizations without one spent weeks figuring it out. The architect mandates SBOM generation as part of the build process.
+          </div>
+          <ul class="key-list">
+            <li><strong>Use in security response</strong> — When a new vulnerability is announced (CVE), search SBOM to find every application using the affected component. Prioritize patching those apps first.</li>
+            <li><strong>Integration with Splunk</strong> — Import SBOM data into Splunk. Correlate with vulnerability scan data. When ES fires an alert on a server, enrich it with SBOM info to understand what software is at risk.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">5.4–5.6</span>
+          <span class="lesson-title">Paved Roads & Architecture Blueprints</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="explain-box">
+            <div class="label">Paved Roads concept</div>
+            A "paved road" is a pre-built, pre-approved, security-compliant way to do something. Instead of every team building their own logging setup from scratch (and getting it wrong), the security team provides a "paved road" — a pre-configured, ready-to-use solution.
+          </div>
+          <ul class="key-list">
+            <li><strong>Example paved road</strong> — A Docker container image pre-configured with the Splunk UF and all required logging settings. Developer just uses this image → their app is automatically onboarded to Splunk with correct configs.</li>
+            <li><strong>Architecture Blueprints</strong> — Standard, documented designs for common scenarios. "Here's the blueprint for adding a new cloud app to our security monitoring." Teams follow the blueprint instead of reinventing the wheel.</li>
+            <li><strong>Infrastructure and App Architecture Support</strong> — Security architect must understand how the application is deployed (microservices? serverless? containers?) to know what security sensors to recommend. Different architectures need different instrumentation.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title">Domain 5 — Quick Check</div>
+        <div class="quiz-q">
+          <div class="q-text">6. A critical vulnerability (Log4Shell) is announced affecting a popular Java library. The security team needs to quickly identify all affected systems. What pre-existing capability would make this FASTEST?</div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="answer(this,'wrong')">A. A network vulnerability scanner</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">B. Running a search on all server logs</div>
+            <div class="quiz-opt" onclick="answer(this,'correct')">C. An SBOM database that lists all software components in every application</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">D. Contacting each development team individually</div>
+          </div>
+          <div class="quiz-explain">An SBOM database lets you immediately search "which apps use Log4j?" and get an instant answer. Network scanners can miss things and take time. Log searches may not reveal library usage. SBOM is the architect's proactive solution to rapid vulnerability impact assessment.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOMAIN 6 -->
+    <div id="d6" class="panel">
+      <div class="section-header">
+        <div class="section-num">06</div>
+        <div class="section-title">Governance, Risk, and Compliance (GRC)</div>
+        <div class="section-pct">10% of exam (~12 questions)</div>
+      </div>
+
+      <div class="explain-box">
+        <div class="label">What GRC means for a security architect</div>
+        GRC is about aligning security to business requirements, legal requirements, and industry standards. The architect must know which frameworks apply and how they influence architecture decisions.
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">6.1–6.3</span>
+          <span class="lesson-title">Key Frameworks and Regulations</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="comparison-grid">
+            <div class="comp-card">
+              <div class="comp-title">NIST CSF</div>
+              NIST Cybersecurity Framework. 5 functions: Identify, Protect, Detect, Respond, Recover. A universal framework for organizing security controls. Architect maps the organization's security capabilities to these 5 functions to find gaps.
+            </div>
+            <div class="comp-card">
+              <div class="comp-title">GDPR</div>
+              EU data privacy law. Affects security logging: you can't log PII (personal data) without consent. Data must stay in EU (data residency). Must delete data on request (right to erasure). Architect must design logging systems that comply.
+            </div>
+            <div class="comp-card">
+              <div class="comp-title">PCI DSS</div>
+              Payment Card Industry standard. If you handle credit cards, you must comply. Requires: 12 months log retention, access control, monitoring of all access to cardholder data, annual penetration testing.
+            </div>
+            <div class="comp-card">
+              <div class="comp-title">HIPAA</div>
+              US healthcare data protection. Protect patient health information. Requires: audit logs of who accessed patient records, breach notification, encryption. Architect designs logging around protected health information (PHI).
+            </div>
+          </div>
+
+          <div class="tip-box">
+            <div class="label">GDPR impact on Splunk architecture</div>
+            If you're logging user activity and it includes EU citizens' data, you might be capturing GDPR-protected information in your Splunk indexes. The architect must: (1) Design data masking for PII fields, (2) Ensure EU data stays on EU indexers, (3) Build a process to delete specific users' data on request.
+          </div>
+
+          <ul class="key-list">
+            <li><strong>OT/ICS Security Frameworks</strong> — NERC CIP (energy sector), IEC 62443 (industrial systems). These have specific requirements for how OT environments must be monitored and protected.</li>
+            <li><strong>NIST SP 800-53</strong> — Detailed security controls catalog. Often used by government organizations and their contractors.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">6.4–6.5</span>
+          <span class="lesson-title">Risk Management and Security Cost Justification</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="explain-box">
+            <div class="label">Business reality: Security costs money</div>
+            The architect must speak "business language." Executives don't care about technical security details — they care about risk and cost. You must justify security spending by quantifying risk reduction.
+          </div>
+          <ul class="key-list">
+            <li><strong>Risk = Likelihood × Impact</strong> — A very likely attack with small impact may be lower priority than a rare attack with catastrophic impact (e.g., ransomware shutting down operations).</li>
+            <li><strong>Risk Tolerance</strong> — Every organization has a different appetite for risk. A startup may accept more risk to move fast. A bank must be extremely risk-averse. The architect designs security aligned to the organization's risk tolerance.</li>
+            <li><strong>Cost-Benefit Analysis</strong> — "This SOAR implementation costs $X per year, but will save $Y in analyst time and reduce breach probability by Z%. Expected ROI: ___." Architects must make this case.</li>
+            <li><strong>Residual Risk</strong> — After all controls are in place, some risk remains. The architect must clearly communicate what residual risk exists to executives.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title">Domain 6 — Quick Check</div>
+        <div class="quiz-q">
+          <div class="q-text">7. An EU-based company is building a new Splunk deployment to monitor user activity. Under GDPR, what is the MOST important architecture consideration?</div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="answer(this,'wrong')">A. Using SSL/TLS for all data in transit</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">B. Enabling Splunk audit logs</div>
+            <div class="quiz-opt" onclick="answer(this,'correct')">C. Ensuring user PII is masked or not collected, data residency is within the EU, and a data deletion process exists</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">D. Implementing role-based access control</div>
+          </div>
+          <div class="quiz-explain">GDPR specifically addresses: what personal data you can collect (must have lawful basis), where it must be stored (data residency in EU), how long you can keep it, and the right to erasure. A Splunk architect must design the data pipeline and storage with all these constraints in mind. SSL/TLS and RBAC are good practices but not specific GDPR requirements.</div>
+        </div>
+      </div>
+
+      <div class="docs-box">
+        <div class="docs-box-title">📚 Official Splunk Docs — Domain 6</div>
+        <div class="docs-links">
+          <a class="docs-link" href="https://help.splunk.com/en/splunk-enterprise-security-8/splunk-app-for-pci-compliance" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk App for PCI Compliance</div><div class="dl-desc">Official Splunk PCI DSS compliance app documentation</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://lantern.splunk.com/Security" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Lantern — Compliance Patterns</div><div class="dl-desc">HIPAA, GDPR, compliance monitoring patterns with Splunk</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://www.nist.gov/cyberframework" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">NIST Cybersecurity Framework (CSF)</div><div class="dl-desc">Official NIST CSF — Identify, Protect, Detect, Respond, Recover</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://gdpr.eu/what-is-gdpr/" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">GDPR Overview</div><div class="dl-desc">GDPR requirements relevant to security logging and data residency</div></div><span class="dl-arrow">↗</span></a>
+        </div>
+      </div>
+        </div>
+
+    <!-- DOMAIN 7 -->
+    <div id="d7" class="panel">
+      <div class="section-header">
+        <div class="section-num">07</div>
+        <div class="section-title">Measuring & Improving Security Program Effectiveness</div>
+        <div class="section-pct">15% of exam (~18 questions)</div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">7.1–7.2</span>
+          <span class="lesson-title">Security Metrics — What to Measure</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="explain-box">
+            <div class="label">Why metrics matter</div>
+            "You can't improve what you can't measure." Security metrics tell you: Is our security getting better or worse? Are our controls actually working? Where should we invest next? The architect designs the measurement framework, not just the technical controls.
+          </div>
+
+          <p class="sub-heading">Key Security Metrics</p>
+          <div class="comparison-grid">
+            <div class="comp-card">
+              <div class="comp-title">Detection Metrics</div>
+              <strong>MTTD</strong> (Mean Time to Detect) — How long until we notice an attack?<br><br>
+              <strong>Detection Coverage</strong> — What % of MITRE ATT&CK techniques do we have detections for?<br><br>
+              <strong>False Positive Rate</strong> — What % of alerts are not real threats?
+            </div>
+            <div class="comp-card">
+              <div class="comp-title">Response Metrics</div>
+              <strong>MTTR</strong> (Mean Time to Respond) — How long to contain an incident?<br><br>
+              <strong>MTTC</strong> (Mean Time to Contain) — How long to stop the attacker?<br><br>
+              <strong>Incident Volume Trend</strong> — Are incidents increasing or decreasing month-over-month?
+            </div>
+          </div>
+
+          <div class="explain-box">
+            <div class="label">Risk tolerance drives metrics</div>
+            A payment processor may require MTTR under 15 minutes because every minute of breach means credit card theft. A non-critical internal system might tolerate 4-hour MTTR. The architect sets SLAs for each tier of system based on business risk tolerance.
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">7.3–7.4</span>
+          <span class="lesson-title">Continuous Improvement & Purple Teaming</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <ul class="key-list">
+            <li><strong>Purple Team</strong> — Red team (attackers) and blue team (defenders) work TOGETHER. Red team attacks, blue team tries to detect. Then they share notes: "You did X, why didn't you detect it?" Used to continuously improve detection rules.</li>
+            <li><strong>Continuous Process Improvement</strong> — After every incident and every purple team exercise: document what worked and what didn't → update playbooks, detection rules, processes. The program never "finishes."</li>
+            <li><strong>Control Testing</strong> — Regularly verify that controls still work. A firewall rule created 2 years ago may have been overridden. An alert that worked last year may be broken by a data format change. Architect builds systematic testing into the program.</li>
+            <li><strong>Gap Remediation</strong> — When testing reveals gaps: prioritize fixes based on risk. A gap in detecting ransomware behavior is more critical than a gap in detecting low-sophistication script kiddies.</li>
+          </ul>
+          <div class="tip-box">
+            <div class="label">MITRE ATT&CK for gap analysis</div>
+            Map all your Splunk detection rules to MITRE ATT&CK techniques. Visually see which techniques you detect (green) and which have no coverage (red). This is your gap analysis. Prioritize building detections for the techniques most used by threat actors targeting your industry.
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title">Domain 7 — Quick Check</div>
+        <div class="quiz-q">
+          <div class="q-text">8. The security team's MTTD (Mean Time to Detect) increased from 2 hours to 8 hours over 3 months. What is the BEST first step to diagnose the problem?</div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="answer(this,'wrong')">A. Buy more security tools</div>
+            <div class="quiz-opt" onclick="answer(this,'correct')">B. Analyze whether data sources are still feeding correctly, check if any correlation rules are broken, and review recent changes to the environment</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">C. Hire more analysts</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">D. Increase alert sensitivity to generate more alerts</div>
+          </div>
+          <div class="quiz-explain">A degrading MTTD often means detection pipelines broke silently. Check: Are logs still flowing? Did any data sources stop sending? Did a schema change break a correlation rule? Was there a Splunk upgrade that affected anything? Before adding tools or people, diagnose what changed. This is the architect's systematic troubleshooting approach.</div>
+        </div>
+      </div>
+
+      <div class="docs-box">
+        <div class="docs-box-title">📚 Official Splunk Docs — Domain 7</div>
+        <div class="docs-links">
+          <a class="docs-link" href="https://help.splunk.com/en/splunk-enterprise-security-8/user-guide/8.0/introduction/about-splunk-enterprise-security" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk ES — TDIR Platform</div><div class="dl-desc">Security metrics, MTTD/MTTR dashboards, and program effectiveness in ES 8</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://research.splunk.com/detections/" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk STRT — Detection Library</div><div class="dl-desc">Map detections to MITRE ATT&CK — use for coverage gap analysis</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://attack.mitre.org/matrices/enterprise/" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">MITRE ATT&CK Matrix</div><div class="dl-desc">Visual matrix — map your Splunk rules to techniques to identify gaps</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://lantern.splunk.com/Security" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Lantern — Security Posture</div><div class="dl-desc">Measuring and improving security program effectiveness</div></div><span class="dl-arrow">↗</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOMAIN 8 -->
+    <div id="d8" class="panel">
+      <div class="section-header">
+        <div class="section-num">08</div>
+        <div class="section-title">Security Capability Selection, Placement & Configuration</div>
+        <div class="section-pct">15% of exam (~18 questions)</div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">8.1–8.2</span>
+          <span class="lesson-title">Security Capability Framework: Prevent, Detect, Respond, Recover</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="explain-box">
+            <div class="label">The 4 pillars of defense</div>
+            No single tool does everything. The architect must ensure the organization has capabilities across ALL 4 pillars. Most organizations over-invest in prevention and under-invest in detection and response.
+          </div>
+          <div class="comparison-grid">
+            <div class="comp-card">
+              <div class="comp-title">🛡️ Prevention</div>
+              Stop attacks before they succeed. Examples: Firewall rules, EDR blocking, email filtering, patch management, MFA. The goal: reduce attack surface.
+            </div>
+            <div class="comp-card">
+              <div class="comp-title">🔍 Detection</div>
+              Identify attacks in progress. Examples: Splunk ES correlation rules, UEBA, IDS/IPS alerts, threat intel matching. The goal: minimize MTTD.
+            </div>
+            <div class="comp-card">
+              <div class="comp-title">⚡ Response</div>
+              Contain and eradicate threats. Examples: SOAR playbooks, IR procedures, isolation capabilities, forensic tools. The goal: minimize MTTR.
+            </div>
+            <div class="comp-card">
+              <div class="comp-title">🔄 Recovery</div>
+              Restore normal operations. Examples: Backups, DR plans, business continuity procedures. The goal: minimize downtime after an incident.
+            </div>
+          </div>
+
+          <div class="explain-box">
+            <div class="label">Coverage Gap Analysis</div>
+            The architect maps current tools to each capability area and finds gaps. "We have great prevention controls, but if an attacker bypasses them, we have no way to detect lateral movement." That's a detection gap. Fix it with network monitoring + Splunk ES detection rules.
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">8.3–8.5</span>
+          <span class="lesson-title">Selecting and Justifying Security Technologies</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <ul class="key-list">
+            <li><strong>Business Alignment</strong> — Security tool selection must align with what the business values most. A healthcare org needs HIPAA-compliant tools and must prioritize PHI protection. A fintech prioritizes transaction integrity.</li>
+            <li><strong>Technology Landscape Fit</strong> — The tool must integrate with existing systems. If everything is AWS cloud, an on-prem security tool that doesn't have cloud connectors is a bad fit.</li>
+            <li><strong>Total Cost of Ownership (TCO)</strong> — License cost + implementation + staff training + ongoing maintenance. The "cheapest" tool may be most expensive when you include TCO.</li>
+            <li><strong>Vendor Evaluation Criteria</strong> — Reliability, support quality, roadmap, customer references, integration ecosystem. The architect leads procurement decisions with technical input.</li>
+            <li><strong>Implementation Strategy</strong> — Phased rollout vs. big bang. Pilot with a small group first. Define success metrics before deployment. Have a rollback plan.</li>
+          </ul>
+          <div class="tip-box">
+            <div class="label">Exam scenario tip for domain 8</div>
+            Questions like: "An organization is migrating to AWS. Their current SIEM is on-premises. What should the security architect recommend?" Answer: Either migrate Splunk to cloud (Splunk Cloud) or use a hybrid architecture with cloud forwarders sending to on-prem indexers, depending on cost, latency, and compliance requirements.
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-header" onclick="toggleLesson(this)">
+          <span class="lesson-id">8.6</span>
+          <span class="lesson-title">Resilient Solutions — High Availability & Disaster Recovery</span>
+          <div class="toggle-btn">+</div>
+        </div>
+        <div class="lesson-body">
+          <div class="explain-box">
+            <div class="label">Resilience in security infrastructure</div>
+            The security monitoring system itself must be resilient. If Splunk goes down during a major attack, you're blind exactly when you need visibility most. The architect designs for HA (High Availability) and DR (Disaster Recovery).
+          </div>
+          <ul class="key-list">
+            <li><strong>Indexer Clustering</strong> — Multiple indexers with replication. If one indexer fails, data is not lost and search continues on remaining indexers.</li>
+            <li><strong>Search Head Clustering</strong> — Multiple search heads. If one fails, users fail over to another. No single point of failure for analysts.</li>
+            <li><strong>Forwarder Redundancy</strong> — Configure UFs with multiple indexers in the outputs.conf. If primary indexer is unreachable, forwarder automatically routes to backup.</li>
+            <li><strong>Multi-Site Clustering</strong> — Data replicated across two physical data centers. If entire site fails, the other site has all data and can continue operations.</li>
+            <li><strong>RTO and RPO</strong> — Recovery Time Objective (how fast must we recover?) and Recovery Point Objective (how much data loss is acceptable?). Architect designs infrastructure to meet these targets.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-title">Domain 8 — Quick Check</div>
+        <div class="quiz-q">
+          <div class="q-text">9. An organization has excellent perimeter firewalls and endpoint antivirus but has suffered 3 breaches where attackers moved laterally for weeks undetected. Which capability area is MOST lacking?</div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="answer(this,'wrong')">A. Prevention — they need better firewalls</div>
+            <div class="quiz-opt" onclick="answer(this,'correct')">B. Detection — they need better internal network monitoring and lateral movement detection</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">C. Recovery — they need better backup systems</div>
+            <div class="quiz-opt" onclick="answer(this,'wrong')">D. Prevention — they need better endpoint controls</div>
+          </div>
+          <div class="quiz-explain">Classic "defense in depth" failure. Good prevention at the perimeter, but once attackers got in, no one detected them moving laterally. The fix is detection capabilities inside the network: network traffic analysis, Splunk ES correlation rules for lateral movement (pass-the-hash, Kerberoasting), UEBA for unusual account behavior. This is a coverage gap in the Detection pillar.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRACTICE QUIZ -->
+    <div id="quiz" class="panel">
+      <div class="section-header">
+        <div>
+          <div class="section-title">🎯 Full Practice Quiz</div>
+          <div style="color:var(--muted);font-size:13px;margin-top:6px;">10 scenario-based questions across all domains. Click an answer to reveal the explanation.</div>
+        </div>
+      </div>
+
+      <div class="quiz-q">
+        <div class="q-text">Q1. [Domain 2] A company needs to retain logs for 7 years for legal hold but can only afford 90 days of hot storage. What is the BEST solution?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="answer(this,'wrong')">A. Delete logs after 90 days</div>
+          <div class="quiz-opt" onclick="answer(this,'correct')">B. Implement SmartStore or archive frozen buckets to cheap object storage (S3/Azure Blob)</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">C. Buy more expensive SSD storage for 7 years of data</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">D. Compress logs and keep in warm buckets</div>
+        </div>
+        <div class="quiz-explain">Splunk SmartStore and frozen bucket archival to object storage (S3, Azure Blob) enables cost-effective long-term retention. Object storage costs pennies per GB/month vs. expensive SSD. Data can be "thawed" from archive for forensic investigation when needed. This is the standard architect answer for compliance retention at scale.</div>
+      </div>
+
+      <div class="quiz-q">
+        <div class="q-text">Q2. [Domain 8] A CISO wants to know if their security program is improving. What metric would BEST show improvement in detection capability?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="answer(this,'wrong')">A. Number of security tools in use</div>
+          <div class="quiz-opt" onclick="answer(this,'correct')">B. Decrease in Mean Time to Detect (MTTD) over time</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">C. Number of firewall rules</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">D. Security budget increase year over year</div>
+        </div>
+        <div class="quiz-explain">MTTD directly measures how fast you detect threats — lower is better. More tools or more rules don't mean better outcomes. Budget is an input, not an outcome. MTTD is an outcome metric that reflects real detection capability improvement over time.</div>
+      </div>
+
+      <div class="quiz-q">
+        <div class="q-text">Q3. [Domain 4] A SOAR playbook needs to automatically isolate a compromised endpoint. The playbook fails because it cannot reach the EDR API. What is the MOST likely architectural issue?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="answer(this,'wrong')">A. The SOAR playbook has a bug</div>
+          <div class="quiz-opt" onclick="answer(this,'correct')">B. Network segmentation prevents SOAR from reaching the EDR management API</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">C. The EDR software is not installed on the endpoint</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">D. The SOAR license has expired</div>
+        </div>
+        <div class="quiz-explain">Domain 4.1 specifically addresses how network architecture can constrain orchestration. If SOAR is in one network segment and the EDR management API is in another with no firewall rule allowing communication, automation fails. This is an architect design consideration — SOAR needs network access paths to everything it must automate.</div>
+      </div>
+
+      <div class="quiz-q">
+        <div class="q-text">Q4. [Domain 2] An organization is onboarding 5 different firewall vendors into Splunk. Analysts complain that they need separate searches for each vendor. What is the BEST architectural solution?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="answer(this,'wrong')">A. Write a separate saved search for each firewall vendor</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">B. Replace all firewalls with a single vendor</div>
+          <div class="quiz-opt" onclick="answer(this,'correct')">C. Install vendor-specific Technology Add-ons (TAs) to normalize data to the CIM Network Traffic data model</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">D. Train analysts to memorize each vendor's field names</div>
+        </div>
+        <div class="quiz-explain">CIM normalization via TAs is the standard answer. Each vendor's TA maps their specific field names to CIM-standard field names. Once normalized, a single search using CIM fields (src, dest, action) works across ALL vendors. This is fundamental Splunk architecture for multi-vendor environments.</div>
+      </div>
+
+      <div class="quiz-q">
+        <div class="q-text">Q5. [Domain 5] Developers at a company constantly deploy applications without security logging. What "paved road" approach would BEST solve this at scale?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="answer(this,'wrong')">A. Send developers to security training</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">B. Review every deployment manually for logging compliance</div>
+          <div class="quiz-opt" onclick="answer(this,'correct')">C. Create pre-approved container/VM images with Splunk UF pre-configured — developers must use these images to deploy</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">D. Block deployments without security team approval</div>
+        </div>
+        <div class="quiz-explain">Paved roads solve the scale problem. Making security the path of least resistance — by embedding UF in the approved base image — means developers automatically get logging without thinking about it. Training and manual review don't scale. Blocking creates friction without solving the root cause. This is the architect's scalable, DevSecOps approach.</div>
+      </div>
+
+      <div class="docs-box">
+        <div class="docs-box-title">📚 Official Splunk Docs — Domain 5</div>
+        <div class="docs-links">
+          <a class="docs-link" href="https://help.splunk.com/en/splunk-enterprise-security-8/security-content-update" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Security Content Update</div><div class="dl-desc">Detection as code — managing and deploying security content at scale</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://github.com/splunk/security_content" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Security Content on GitHub</div><div class="dl-desc">Official detection rules as code — see how Splunk implements Detection as Code</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://help.splunk.com/en/splunk-enterprise/administer/install-and-upgrade/9.3/plan-your-splunk-enterprise-installation/splunk-enterprise-architecture-and-processes" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Enterprise Architecture & Scaling</div><div class="dl-desc">Distributed deployment, scaling, clustering architecture</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://lantern.splunk.com/Security" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Lantern — Security</div><div class="dl-desc">DevSecOps patterns, CI/CD for security, paved roads implementation</div></div><span class="dl-arrow">↗</span></a>
+        </div>
+      </div>
+
+      <div class="quiz-q">
+        <div class="q-text">Q6. [Domain 6] A company processes EU customer data. A user requests deletion of their data (GDPR right to erasure). The security team realizes this user's IP addresses are in Splunk security logs. What should the architect have designed for in advance?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="answer(this,'wrong')">A. Nothing — security logs are exempt from GDPR</div>
+          <div class="quiz-opt" onclick="answer(this,'correct')">B. A data masking/anonymization process for PII in security logs, and a documented procedure for handling erasure requests that balances security needs with GDPR requirements</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">C. Delete the entire index containing that user's data</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">D. Export the user's data and give it to them</div>
+        </div>
+        <div class="quiz-explain">GDPR erasure requests are complex for security logs — you may have legitimate security reasons to retain them (legal basis). The architect must pre-design: (1) Data minimization - don't log PII you don't need, (2) Pseudonymization/masking of personal data in logs, (3) A documented process for handling erasure requests with legal review. Deleting entire indexes destroys your security audit trail.</div>
+      </div>
+
+      <div class="quiz-q">
+        <div class="q-text">Q7. [Domain 1] An organization wants to use threat intelligence to prioritize which alerts to investigate first. What Splunk ES capability BEST enables this?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="answer(this,'correct')">A. Risk-Based Alerting (RBA) — combining threat intel matches with risk scores to prioritize notable events</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">B. Creating separate dashboards for each threat intel source</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">C. Forwarding all alerts to email for manual review</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">D. Disabling low-priority alerts</div>
+        </div>
+        <div class="quiz-explain">Splunk ES Risk-Based Alerting (RBA) aggregates risk scores across multiple low-confidence signals into high-confidence alerts. When threat intel matches an entity (user, IP, host), it adds risk score. When the risk score crosses a threshold, an alert fires. This drastically reduces false positives while ensuring high-confidence true positives get immediate attention.</div>
+      </div>
+
+      <div class="quiz-q">
+        <div class="q-text">Q8. [Domain 3] During a large-scale ransomware incident, the CISO asks "how many systems are confirmed infected?" The SOC analyst doesn't know how to answer quickly. What should the architect have built BEFORE this incident?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="answer(this,'wrong')">A. A training program to teach analysts to count affected systems</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">B. A manual process for surveying all system administrators</div>
+          <div class="quiz-opt" onclick="answer(this,'correct')">C. An ES dashboard that automatically correlates ransomware indicators with asset data to show real-time scope of impact</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">D. A spreadsheet tracking all systems</div>
+        </div>
+        <div class="quiz-explain">An architect's job is to prepare for incidents BEFORE they happen. A pre-built incident scope dashboard that uses asset data + IOC matches provides instant situational awareness during a crisis. Asset management integration in Splunk ES lets you correlate "which systems have we seen this ransomware indicator on?" with your asset inventory for an instant answer.</div>
+      </div>
+
+      <div class="quiz-q">
+        <div class="q-text">Q9. [Domain 2] A manufacturing company has OT/ICS systems controlling factory equipment. These systems can't have agents installed and run proprietary protocols. How should the architect design monitoring for these systems?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="answer(this,'wrong')">A. Ignore OT systems — they're not IT security's responsibility</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">B. Install Splunk UF on all OT devices</div>
+          <div class="quiz-opt" onclick="answer(this,'correct')">C. Deploy passive network sensors (network TAPs/SPAN ports) with OT-protocol-aware technology to capture traffic and forward to Splunk</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">D. Monitor only the IT network and assume OT is safe</div>
+        </div>
+        <div class="quiz-explain">OT monitoring requires out-of-band/passive approaches. Network TAPs create passive copies of traffic without touching the OT systems. Purpose-built OT security tools (like Claroty, Dragos) understand industrial protocols (Modbus, DNP3) and can forward normalized events to Splunk. This provides visibility without any risk to production systems.</div>
+      </div>
+
+      <div class="quiz-q">
+        <div class="q-text">Q10. [Domain 7] After a purple team exercise, the team discovers that an attacker technique (Kerberoasting) has no detection in Splunk. The team has limited resources. How should the architect prioritize building this detection?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="answer(this,'wrong')">A. Build it immediately — any gap should be fixed ASAP</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">B. Document it and revisit next year</div>
+          <div class="quiz-opt" onclick="answer(this,'correct')">C. Assess: How commonly do threat actors targeting this industry use Kerberoasting? What is the potential impact if undetected? Prioritize based on risk and available compensating controls.</div>
+          <div class="quiz-opt" onclick="answer(this,'wrong')">D. Ignore it — Kerberoasting is an old technique</div>
+        </div>
+        <div class="quiz-explain">Prioritization based on risk is the architect's approach. Consider: (1) Threat relevance — is Kerberoasting used by APT groups targeting your industry? (2) Impact — Kerberoasting leads to privileged account compromise, which is critical. (3) Compensating controls — do you have any other detection for the downstream effects? If risk is high and no compensating controls exist, prioritize it. This is risk-based decision making.</div>
+      </div>
+
+      <div class="docs-box">
+        <div class="docs-box-title">📚 Official Splunk Docs — Domain 8</div>
+        <div class="docs-links">
+          <a class="docs-link" href="https://help.splunk.com/en/splunk-enterprise-security-8/install/8.0/planning/deployment-considerations-for-splunk-enterprise-security" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">ES Deployment Considerations</div><div class="dl-desc">Single instance vs. distributed, cloud vs. on-prem, hybrid options</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://help.splunk.com/en/splunk-enterprise/administer/install-and-upgrade/9.3/plan-your-splunk-enterprise-installation/splunk-enterprise-architecture-and-processes" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Enterprise Architecture</div><div class="dl-desc">Indexer clustering, replication factor, search factor, resilience</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://www.splunk.com/en_us/products/enterprise-security.html" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk ES — Unified TDIR Platform</div><div class="dl-desc">Prevention, detection, response, recovery capability overview</div></div><span class="dl-arrow">↗</span></a>
+          <a class="docs-link" href="https://lantern.splunk.com/Security" target="_blank"><span class="dl-icon">🔗</span><div class="dl-inner"><div class="dl-title">Splunk Lantern — Security</div><div class="dl-desc">Capability selection, placement, and implementation patterns</div></div><span class="dl-arrow">↗</span></a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- GLOSSARY -->
+    <div id="glossary" class="panel">
+      <div class="section-header">
+        <div class="section-title">📖 Key Terms Glossary</div>
+      </div>
+      <ul class="key-list" style="grid-template-columns:1fr;">
+        <li><strong>APT (Advanced Persistent Threat)</strong> — Sophisticated, long-term attack, often nation-state sponsored. Stays hidden in a network for months.</li>
+        <li><strong>CI/CD</strong> — Continuous Integration / Continuous Deployment. Automated pipeline for building, testing, and deploying software.</li>
+        <li><strong>CIM</strong> — Common Information Model. Splunk's data normalization framework. Maps vendor-specific fields to standard names.</li>
+        <li><strong>CVE</strong> — Common Vulnerability and Exposure. Standardized identifier for software vulnerabilities. (e.g., CVE-2021-44228 = Log4Shell)</li>
+        <li><strong>Data Mesh</strong> — Decentralized data architecture where domain teams own and share their data.</li>
+        <li><strong>EDR</strong> — Endpoint Detection & Response. Security software on endpoints providing rich telemetry and response capabilities.</li>
+        <li><strong>Federated Search</strong> — Searching across multiple Splunk instances or data sources from a single interface.</li>
+        <li><strong>GRC</strong> — Governance, Risk, and Compliance. Framework for aligning security to business, legal, and regulatory requirements.</li>
+        <li><strong>IOC</strong> — Indicator of Compromise. Digital fingerprint of an attack: malicious IP, file hash, domain, registry key.</li>
+        <li><strong>ITSM/ITIL</strong> — IT Service Management / IT Infrastructure Library. Framework for managing IT services and changes.</li>
+        <li><strong>Kerberoasting</strong> — Attack technique targeting Active Directory service accounts. Attacker requests service tickets, then cracks them offline.</li>
+        <li><strong>Lateral Movement</strong> — Attacker moving from one compromised system to others within the network to find high-value targets.</li>
+        <li><strong>MITRE ATT&CK</strong> — Framework cataloging all known attacker techniques, organized by attack phase.</li>
+        <li><strong>MTTD</strong> — Mean Time to Detect. Average time from attack start to detection. Lower = better.</li>
+        <li><strong>MTTR</strong> — Mean Time to Respond. Average time from detection to containment. Lower = better.</li>
+        <li><strong>OT/ICS</strong> — Operational Technology / Industrial Control Systems. Systems controlling physical infrastructure.</li>
+        <li><strong>PHI</strong> — Protected Health Information. Patient medical data protected by HIPAA.</li>
+        <li><strong>PII</strong> — Personally Identifiable Information. Data that identifies a person. Protected by GDPR and other laws.</li>
+        <li><strong>Purple Team</strong> — Red team (attackers) and blue team (defenders) working together to test and improve defenses.</li>
+        <li><strong>RBA</strong> — Risk-Based Alerting. Splunk ES feature that aggregates risk scores to reduce false positives.</li>
+        <li><strong>SBOM</strong> — Software Bill of Materials. Complete inventory of all components in a software application.</li>
+        <li><strong>SOAR</strong> — Security Orchestration, Automation, and Response. Platform for automating security workflows.</li>
+        <li><strong>SOC</strong> — Security Operations Center. Team and technology for monitoring and responding to security threats.</li>
+        <li><strong>SPAN Port</strong> — Switch Port Analyzer. Copies network traffic to a monitoring device without interrupting the original traffic.</li>
+        <li><strong>TAXII</strong> — Trusted Automated Exchange of Intelligence Information. Protocol for sharing threat intelligence feeds.</li>
+        <li><strong>TCO</strong> — Total Cost of Ownership. Full cost of a technology including purchase, implementation, operation, and maintenance.</li>
+        <li><strong>UEBA</strong> — User and Entity Behavior Analytics. Detects threats by finding deviations from normal behavior patterns.</li>
+        <li><strong>Zero Trust</strong> — Security model: trust nothing by default, verify everything. No implicit trust based on network location.</li>
+      </ul>
+    </div>
+
+  </main>
+</div>
+
+<div class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+
+  const map = {overview:0,basics:1,d1:3,d2:4,d3:5,d4:6,d5:7,d6:8,d7:9,d8:10,quiz:12,glossary:13};
+  const items = document.querySelectorAll('.nav-item');
+  if(map[id] !== undefined && items[map[id]]) items[map[id]].classList.add('active');
+
+  // Close sidebar on mobile
+  if(window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+  window.scrollTo(0,0);
+}
+
+function toggleLesson(header) {
+  const card = header.parentElement;
+  card.classList.toggle('open');
+}
+
+function answer(opt, result) {
+  const optionsDiv = opt.parentElement;
+  const allOpts = optionsDiv.querySelectorAll('.quiz-opt');
+  const explain = opt.closest('.quiz-q').querySelector('.quiz-explain');
+
+  allOpts.forEach(o => {
+    o.style.pointerEvents = 'none';
+    if(o === opt) {
+      o.classList.add(result);
+    } else if(result === 'wrong') {
+      // reveal the correct one
+      o.classList.add('reveal');
+    }
+  });
+
+  // Find and mark correct if user was wrong
+  if(result === 'wrong') {
+    allOpts.forEach(o => {
+      // try to find by position - mark the right one visually
+    });
+  }
+
+  if(explain) explain.style.display = 'block';
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// Open first lesson in each domain automatically
+document.querySelectorAll('.lesson-card:first-of-type').forEach(card => {
+  // don't auto-open, let users click
+});
+</script>
+
+</body>
+</html>
